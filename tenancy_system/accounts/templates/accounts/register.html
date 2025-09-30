@@ -1,0 +1,84 @@
+{% extends 'accounts/base.html' %}
+{% block content %}
+<h1>Register Tenant</h1>
+<form method="post">
+    {% csrf_token %}
+    
+    <!-- Show form-wide errors -->
+    {{ form.non_field_errors }}
+
+    <p>
+        {{ form.username.label_tag }}<br>
+        {{ form.username }}
+        {% for error in form.username.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.email.label_tag }}<br>
+        {{ form.email }}
+        {% for error in form.email.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.first_name.label_tag }}<br>
+        {{ form.first_name }}
+        {% for error in form.first_name.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.last_name.label_tag }}<br>
+        {{ form.last_name }}
+        {% for error in form.last_name.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.password1.label_tag }}<br>
+        {{ form.password1 }}
+        {% for error in form.password1.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.password2.label_tag }}<br>
+        {{ form.password2 }}
+        {% for error in form.password2.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.property_rented.label_tag }}<br>
+        {{ form.property_rented }}
+        {% for error in form.property_rented.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.lease_expiry.label_tag }}<br>
+        {{ form.lease_expiry }}
+        {% for error in form.lease_expiry.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <p>
+        {{ form.birthday.label_tag }}<br>
+        {{ form.birthday }}
+        {% for error in form.birthday.errors %}
+            <span style="color:red">{{ error }}</span>
+        {% endfor %}
+    </p>
+
+    <button type="submit">Register Tenant</button>
+</form>
+{% endblock %}

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TENANCY SYSTEM</title>
+</head>
+<body>
+<nav>
+    <a href="{% url 'accounts:login' %}">Login</a> |
+    <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+</nav>
+<hr>
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% block content %}{% endblock %}
+</body>
+</html>
