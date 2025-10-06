@@ -208,9 +208,3 @@ python manage.py collectstatic
 Progress is steady — backend’s shaping up nicely, structure is clean, and we’ve got actual data flowing in this bad boii.
 Next patch is all about linking tenants + making the UI less 2008 and more 2025 and even more backend shizzzz.
 
-> “Not perfect, but it runs — and that’s a win in Django land.”
-
----
-
-Would you like me to add **a quick “Known Bugs / Temporary Workarounds”** section too?
-Those are great for devlogs like this — e.g. “Landing page 404s randomly,” “Dashboard redirect not wired yet,” etc.
