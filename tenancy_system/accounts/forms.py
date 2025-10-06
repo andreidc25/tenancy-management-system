@@ -2,7 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .models import TenantProfile, Property
+from tenants.models import TenantProfile
+from properties.models import Property
 
 # Custom validator
 def no_numbers_in_username(value):
