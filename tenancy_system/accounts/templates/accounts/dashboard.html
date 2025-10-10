@@ -39,3 +39,22 @@
         </table>
     </div>
 </div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h3>Notifications & Announcements</h3>
+    </div>
+    <ul class="list-group list-group-flush">
+        {% for notification in notifications %}
+            <li class="list-group-item {% if not notification.is_read %}list-group-item-info{% endif %}">
+                <strong>{{ notification.title }}</strong>
+                <small class="text-muted d-block">{{ notification.created_at|date:"F d, Y" }}</small>
+                <p class="mb-0">{{ notification.message }}</p>
+            </li>
+        {% empty %}
+            <li class="list-group-item">You have no new notifications.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<a href="{% url 'submit_report' %}" class="btn btn-warning">Submit a Report</a>

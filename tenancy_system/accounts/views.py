@@ -96,3 +96,24 @@ def dashboard(request):
         'payments': payments, # Pass the payments to the template
     }
     return render(request, 'accounts/dashboard.html', context)
+
+from django.db.models import Q # Make sure to import Q
+from notifications.models import Notification # Import the Notification model
+
+@login_required
+def dashboard(request):
+    # ... (your existing code to get tenant_profile, payments, etc.)
+
+    notifications = []
+    if tenant_profile:
+        # Get notifications for this specific tenant OR broadcast messages (where tenant is NULL)
+        # Order by newest first
+        notifications = Notification.objects.filter(
+            Q(tenant=tenant_profile) | Q(tenant__isnull=True)
+        ).order_by('-created_at')
+
+    context = {
+        # ... (your existing context data)
+        'notifications': notifications,
+    }
+    return render(request, 'accounts/dashboard.html', context)
