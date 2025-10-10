@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'accounts',
     'tenants',
     'properties',
+    'payments',
 ]
 
 LOGIN_URL = 'login'

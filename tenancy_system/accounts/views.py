@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
 from .forms import TenantRegisterForm, ProfileUpdateForm
 from tenants.models import TenantProfile
-
+from payments.models import Payment
 
 # ✅ helper: only staff/superusers can register tenants
 def is_admin(user):
@@ -79,3 +79,20 @@ def logout_view(request):
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect('accounts:login')
+
+@login_required
+def dashboard(request):
+    try:
+        tenant_profile = request.user.tenant_profile
+        # Fetch all payments for this tenant, newest first
+        payments = Payment.objects.filter(tenant=tenant_profile).order_by('-payment_date')
+    except AttributeError: # Handles case where user has no tenant_profile
+        tenant_profile = None
+        payments = []
+
+    context = {
+        'tenant': tenant_profile,
+        'property': tenant_profile.property if tenant_profile else None,
+        'payments': payments, # Pass the payments to the template
+    }
+    return render(request, 'accounts/dashboard.html', context)
