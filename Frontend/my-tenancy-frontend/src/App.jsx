@@ -1,17 +1,19 @@
-// src/App.jsx
-
 import React from 'react';
-import LoginForm from './components/LoginForm';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import AdminDashboard from './pages/AdminDashboard';
+import TenantDashboard from './pages/TenantDashboard';
+import './index.css'; // For Tailwind CSS
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1>Tenancy Management System</h1>
-        <LoginForm />
-      </header>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/tenant" element={<TenantDashboard />} />
+      </Routes>
+    </Router>
   );
 }
 

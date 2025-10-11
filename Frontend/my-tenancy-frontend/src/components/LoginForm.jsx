@@ -1,31 +1,37 @@
-// src/components/LoginForm.js
-
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 function LoginForm() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            // Use axios to send a POST request to your Django token endpoint
             const response = await axios.post('http://localhost:8000/api/token/', {
                 username: username,
                 password: password
             });
 
-            // On success, store the authentication tokens in the browser's localStorage
-            localStorage.setItem('access_token', response.data.access);
-            localStorage.setItem('refresh_token', response.data.refresh);
+            const { access, refresh } = response.data;
+            localStorage.setItem('access_token', access);
+            localStorage.setItem('refresh_token', refresh);
 
-            // For now, we'll just alert the user. Later, this will redirect them.
-            alert('Login successful!');
-            window.location.href = '/dashboard'; // A simple redirect for now
+            // Decode the token to check user role (is_staff)
+            const decodedToken = jwtDecode(access);
+            
+            // Redirect based on whether the user is staff/admin
+            if (decodedToken.is_staff) { // You need to ensure 'is_staff' is in your token payload
+                navigate('/admin');
+            } else {
+                navigate('/tenant');
+            }
 
         } catch (err) {
             setError('Invalid username or password.');
@@ -34,30 +40,49 @@ function LoginForm() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-4">
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
             <div>
-                <label>Username:</label>
-                <input 
-                    type="text" 
-                    value={username} 
-                    onChange={(e) => setUsername(e.target.value)} 
-                    required 
+                <label 
+                    htmlFor="username" 
+                    className="text-sm font-medium text-gray-700 sr-only">
+                    Username
+                </label>
+                <input
+                    id="username"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Username"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                 />
             </div>
             <div>
-                <label>Password:</label>
-                <input 
-                    type="password" 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    required 
+                <label 
+                    htmlFor="password" 
+                    className="text-sm font-medium text-gray-700 sr-only">
+                    Password
+                </label>
+                <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
                 />
             </div>
-            <button type="submit">Login</button>
+            <button
+                type="submit"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+                Sign in
+            </button>
         </form>
     );
 }
 
 export default LoginForm;
+
