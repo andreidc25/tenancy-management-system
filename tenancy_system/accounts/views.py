@@ -7,6 +7,9 @@ from django.contrib.auth.models import User
 from .forms import TenantRegisterForm, ProfileUpdateForm
 from tenants.models import TenantProfile
 from payments.models import Payment
+from django.db.models import Q
+from notifications.models import Notification
+from reports.models import Report
 
 # ✅ helper: only staff/superusers can register tenants
 def is_admin(user):
@@ -117,3 +120,67 @@ def dashboard(request):
         'notifications': notifications,
     }
     return render(request, 'accounts/dashboard.html', context)
+
+@login_required
+def dashboard_redirect(request):
+    """
+    Checks the user's role and redirects them to the correct dashboard.
+    """
+    # Check if the user is a superuser or staff (our definition of an admin)
+    if request.user.is_superuser or request.user.is_staff:
+        return redirect('admin_dashboard')
+    
+    # Check if the user is a tenant
+    elif hasattr(request.user, 'tenant_profile'):
+        return redirect('tenant_dashboard')
+        
+    # Optional: A fallback for any other type of user
+    else:
+        # You can decide where they should go. Logging them out is a safe default.
+        return redirect('logout') 
+
+@login_required
+def admin_dashboard(request):
+    # Add logic here to fetch data for the admin (e.g., all tenants, all properties)
+    return render(request, 'accounts/admin_dashboard.html')
+
+@login_required
+def tenant_dashboard(request):
+    """
+    Displays the dashboard for a logged-in tenant.
+    """
+    tenant_profile = None
+    property_info = None
+    payments = []
+    notifications = []
+    reports = []
+
+    try:
+        # Get the tenant's profile
+        tenant_profile = request.user.tenant_profile
+        property_info = tenant_profile.property
+
+        # Get all related data for the dashboard
+        payments = Payment.objects.filter(tenant=tenant_profile).order_by('-payment_date')
+        reports = Report.objects.filter(tenant=tenant_profile).order_by('-created_at')
+        
+        # Get notifications for this tenant AND broadcast messages (where tenant is NULL)
+        notifications = Notification.objects.filter(
+            Q(tenant=tenant_profile) | Q(tenant__isnull=True)
+        ).order_by('-created_at')
+
+    except AttributeError:
+        # This handles cases where a logged-in user might not have a tenant profile
+        pass
+
+    # This is the corrected context dictionary
+    context = {
+        'tenant': tenant_profile,
+        'property': property_info,
+        'payments': payments,
+        'notifications': notifications,
+        'reports': reports,
+    }
+    
+    return render(request, 'accounts/tenant_dashboard.html', context)
+
