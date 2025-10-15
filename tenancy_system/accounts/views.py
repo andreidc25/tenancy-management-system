@@ -10,6 +10,14 @@ from payments.models import Payment
 from django.db.models import Q
 from notifications.models import Notification
 from reports.models import Report
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+
+@api_view(['GET'])
+def test_api(request):
+    return Response({'message': 'Django backend is connected!'})
+
 
 # ✅ helper: only staff/superusers can register tenants
 def is_admin(user):

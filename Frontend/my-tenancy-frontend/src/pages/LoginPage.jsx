@@ -1,8 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("http://localhost:8000/api/auth/login/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!res.ok) throw new Error("Invalid credentials");
+
+      const data = await res.json();
+      console.log("Tokens:", data);
+
+      // Save tokens to localStorage
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+
+      // Redirect user (you can decide based on user role later)
+      navigate("/admin");
+    } catch (err) {
+      setError("Invalid username or password");
+    }
+  };
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       <motion.div
@@ -17,13 +49,15 @@ function LoginPage() {
           <p className="text-gray-500 text-sm">Please sign in to your account</p>
         </div>
 
-        <form className="space-y-4 text-left">
+        <form className="space-y-4 text-left" onSubmit={handleLogin}>
           <div>
             <label className="block text-gray-700 font-medium mb-1">Username</label>
             <input
               type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               placeholder="Enter your username"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
             />
           </div>
 
@@ -31,8 +65,10 @@ function LoginPage() {
             <label className="block text-gray-700 font-medium mb-1">Password</label>
             <input
               type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
             />
           </div>
 
@@ -45,11 +81,11 @@ function LoginPage() {
             Login
           </motion.button>
         </form>
+
+        {error && <p className="text-red-500 mt-3">{error}</p>}
       </motion.div>
     </div>
   );
 }
 
-
 export default LoginPage;
-

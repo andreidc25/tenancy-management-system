@@ -6,6 +6,9 @@ import TenantDashboard from "./pages/TenantDashboard";
 
 function App() {
   return (
+    
+
+
     <Routes>
       {/* Login Page */}
       <Route path="/" element={<LoginPage />} />
