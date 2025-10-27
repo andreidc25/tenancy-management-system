@@ -22,10 +22,14 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('accounts.urls')),
-    path('reports/', include('reports.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-    path('accounts/', include('accounts.urls')), 
+   # path('', include('accounts.urls')),
+   # path('reports/', include('reports.urls')),
+   # path('accounts/', include('django.contrib.auth.urls')),
+   # path('accounts/', include('accounts.urls')), 
+    path('api/auth/', include('accounts.urls')),
+    #path('api/auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

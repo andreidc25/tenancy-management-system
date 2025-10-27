@@ -3,6 +3,47 @@ import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
 
 function LoginPage() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("http://localhost:8000/api/auth/login/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
+    });
+
+    if (!res.ok) throw new Error("Invalid credentials");
+
+    const data = await res.json();
+    console.log("Login response:", data);
+
+    // Save tokens + info
+    localStorage.setItem("access", data.access);
+    localStorage.setItem("refresh", data.refresh);
+    localStorage.setItem("is_staff", data.is_staff);
+    localStorage.setItem("username", data.username);
+
+    // ✅ Convert to proper boolean
+    const isStaff = Boolean(data.is_staff);
+
+    // ✅ Redirect based on role
+    if (isStaff) {
+      navigate("/admin");
+    } else {
+      navigate("/tenant");
+    }
+  } catch (err) {
+    setError("Invalid username or password");
+  }
+};
+
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
       <motion.div

@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
-
+from .views import test_api
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from accounts.views import login_view
 app_name = 'accounts'
 
 urlpatterns = [
