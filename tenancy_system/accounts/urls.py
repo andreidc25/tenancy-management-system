@@ -2,8 +2,8 @@ from django.urls import path
 from . import views
 from .views import test_api
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from accounts.views import login_view
 app_name = 'accounts'
+
 
 urlpatterns = [
     path('register/', views.register, name='register'),
@@ -11,7 +11,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('profile/', views.profile_update, name='profile_update'),
     path('logout/', views.logout_view, name='logout'),
-    path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
-    path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
-    path('dashboard/tenant/', views.tenant_dashboard, name='tenant_dashboard'),
+    #path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
+    #path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
+    #path('dashboard/tenant/', views.tenant_dashboard, name='tenant_dashboard'),
 ]

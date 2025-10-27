@@ -12,9 +12,6 @@ from notifications.models import Notification
 from reports.models import Report
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import authenticate
-from django.http import JsonResponse
 
 
 @api_view(['GET'])
