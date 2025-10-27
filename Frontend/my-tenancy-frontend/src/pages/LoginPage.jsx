@@ -22,14 +22,23 @@ function LoginPage() {
       if (!res.ok) throw new Error("Invalid credentials");
 
       const data = await res.json();
-      console.log("Tokens:", data);
+      console.log("Login response:", data);
 
-      // Save tokens to localStorage
+      // Save tokens + user info
       localStorage.setItem("access", data.access);
       localStorage.setItem("refresh", data.refresh);
+      localStorage.setItem("is_staff", data.is_staff);
+      localStorage.setItem("username", data.username);
 
-      // Redirect user (you can decide based on user role later)
-      navigate("/admin");
+      // ✅ Convert is_staff to proper boolean (handles both string/bool cases)
+      const isStaff = data.is_staff === true || data.is_staff === "true";
+
+      // ✅ Redirect based on role
+      if (isStaff) {
+        navigate("/admin");
+      } else {
+        navigate("/tenant");
+      }
     } catch (err) {
       setError("Invalid username or password");
     }
