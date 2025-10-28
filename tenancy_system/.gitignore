@@ -1,0 +1,20 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database
+db.sqlite3
+
+# Environment files
+.env
+
+# Virtual environment folders
+venv/
+env/
+.venv/
+
+# Django logs / media / static builds
+*.log
+staticfiles/
+media/

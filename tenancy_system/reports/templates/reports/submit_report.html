@@ -1,0 +1,13 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Submit a New Report</h2>
+    <p>Please provide details about the issue you are experiencing.</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Submit Report</button>
+    </form>
+</div>
+{% endblock %}
