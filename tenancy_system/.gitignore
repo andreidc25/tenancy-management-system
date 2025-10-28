@@ -12,6 +12,7 @@ db.sqlite3
 # Virtual environment folders
 venv/
 env/
+.venv/
 
 # Django logs / media / static builds
 *.log
