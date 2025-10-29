@@ -2,7 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyo
 
 # SQLite database
 db.sqlite3
@@ -19,5 +18,3 @@ env/
 *.log
 staticfiles/
 media/
-
-*.egg-info/
