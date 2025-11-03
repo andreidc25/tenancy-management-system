@@ -14,6 +14,7 @@ import AdminRegisterReports from "./pages/AdminRegisterReports";
 import TenantPropertyInfo from "./pages/TenantPropertyInfo";
 import TenantPayments from "./pages/TenantPayments";
 import TenantNotifications from "./pages/TenantNotification";
+import PropertyDetailPage from "./pages/PropertyDetailPage";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
 
       {/* Placeholder Subpages */}
       <Route path="/admin/properties" element={<AdminProperties />} />
+      <Route path="/admin/properties/:id" element={<PropertyDetailPage />} />
       <Route path="/admin/properties/add" element={<AdminRegisterProperty />} />
       <Route path="/admin/tenants" element={<AdminTenants />} />
       <Route path="/admin/tenants/add" element={<AdminRegisterTenant />} />
