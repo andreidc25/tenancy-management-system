@@ -1,17 +1,13 @@
 from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+from .views import CustomTokenObtainPairView
 from . import views
-from .views import test_api
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 app_name = 'accounts'
 
-
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('login/', views.login_view, name='login'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('profile/', views.profile_update, name='profile_update'),
-    path('logout/', views.logout_view, name='logout'),
-    #path('dashboard/', views.dashboard_redirect, name='dashboard_redirect'),
-    #path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
-    #path('dashboard/tenant/', views.tenant_dashboard, name='tenant_dashboard'),
+    # Authentication endpoints for React frontend
+    path('login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
 ]
