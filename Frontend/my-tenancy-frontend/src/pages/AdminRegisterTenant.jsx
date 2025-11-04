@@ -1,157 +1,121 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
+import API from "../api/axios";
 
-const RegisterTenantPage = () => {
+const AddTenantPage = () => {
+  const navigate = useNavigate();
+  const [properties, setProperties] = useState([]);
   const [formData, setFormData] = useState({
-    user: "",
-    phoneNumber: "",
+    username: "",
+    email: "",
     property: "",
-    leaseStart: "",
-    leaseEnd: "",
-    monthlyRent: "",
-    securityDeposit: "",
-    isActive: true,
   });
+  const [loading, setLoading] = useState(true);
+
+  // 🧱 Fetch properties
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const res = await API.get("properties/");
+        setProperties(res.data);
+      } catch (err) {
+        console.error("Failed to fetch properties:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperties();
+  }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === "checkbox" ? checked : value,
-    });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Tenant registered:", formData);
-    // later connect this with your Django backend via fetch/axios
+    try {
+      const res = await API.post("tenant-register/", formData);
+      alert(res.data.message || "Tenant successfully registered!");
+      navigate("/admin/tenants");
+    } catch (err) {
+      console.error("Failed to register tenant:", err.response?.data || err.message);
+      alert("Error: Could not register tenant. Check console for details.");
+    }
   };
+
+  if (loading)
+    return (
+      <div className="flex items-center justify-center h-screen text-gray-500">
+        Loading properties...
+      </div>
+    );
 
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
       <Navbar />
-
       <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Add Tenant Profile</h2>
+        <h2 className="text-2xl font-semibold">Register New Tenant</h2>
       </header>
 
       <main className="p-8">
         <form
           onSubmit={handleSubmit}
-          className="bg-white shadow-lg rounded-2xl p-8 max-w-3xl mx-auto space-y-6"
+          className="bg-white shadow-lg rounded-2xl p-8 max-w-2xl mx-auto space-y-6"
         >
-          {/* User */}
+          {/* Username */}
           <div>
-            <label className="block font-medium mb-2">User:</label>
-            <select
-              name="user"
-              value={formData.user}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-              required
-            >
-              <option value="">-- Select User --</option>
-              <option value="bonbon.acm">bonbon.acm</option>
-              <option value="juan.delacruz">juan.delacruz</option>
-            </select>
-          </div>
-
-          {/* Phone Number */}
-          <div>
-            <label className="block font-medium mb-2">Phone Number:</label>
+            <label className="block font-medium mb-2">Username:</label>
             <input
               type="text"
-              name="phoneNumber"
-              value={formData.phoneNumber}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="e.g. 09123456789"
+              placeholder="Enter tenant username"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
+              required
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block font-medium mb-2">Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter tenant email"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
+              required
             />
           </div>
 
           {/* Property */}
           <div>
-            <label className="block font-medium mb-2">Property:</label>
+            <label className="block font-medium mb-2">Assign Property:</label>
             <select
               name="property"
               value={formData.property}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
+              required
             >
               <option value="">-- Select Property --</option>
-              <option value="Pasig Unit 1">Pasig Unit 1</option>
-              <option value="Taguig Unit 2">Taguig Unit 2</option>
+              {properties.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name || p.location || `Property #${p.id}`}
+                </option>
+              ))}
             </select>
-          </div>
-
-          {/* Lease Start Date */}
-          <div>
-            <label className="block font-medium mb-2">Lease Start Date:</label>
-            <input
-              type="date"
-              name="leaseStart"
-              value={formData.leaseStart}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-              required
-            />
-          </div>
-
-          {/* Lease End Date */}
-          <div>
-            <label className="block font-medium mb-2">Lease End Date:</label>
-            <input
-              type="date"
-              name="leaseEnd"
-              value={formData.leaseEnd}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-              required
-            />
-          </div>
-
-          {/* Monthly Rent */}
-          <div>
-            <label className="block font-medium mb-2">Monthly Rent:</label>
-            <input
-              type="number"
-              name="monthlyRent"
-              value={formData.monthlyRent}
-              onChange={handleChange}
-              placeholder="Enter amount (₱)"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-            />
-          </div>
-
-          {/* Security Deposit */}
-          <div>
-            <label className="block font-medium mb-2">Security Deposit:</label>
-            <input
-              type="number"
-              name="securityDeposit"
-              value={formData.securityDeposit}
-              onChange={handleChange}
-              placeholder="Enter amount (₱)"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-            />
-          </div>
-
-          {/* Active */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={formData.isActive}
-              onChange={handleChange}
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-            />
-            <label className="font-medium">Is Active</label>
           </div>
 
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
+              onClick={() => navigate("/admin/tenants")}
               className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-5 py-2 rounded-xl transition"
             >
               Cancel
@@ -160,7 +124,7 @@ const RegisterTenantPage = () => {
               type="submit"
               className="bg-gradient-to-r from-green-500 to-emerald-400 text-white px-6 py-2 rounded-xl shadow hover:opacity-90 transition"
             >
-              Save Tenant
+              Register Tenant
             </button>
           </div>
         </form>
@@ -169,4 +133,4 @@ const RegisterTenantPage = () => {
   );
 };
 
-export default RegisterTenantPage;
+export default AddTenantPage;

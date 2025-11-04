@@ -11,6 +11,10 @@ import AdminRegisterTenant from "./pages/AdminRegisterTenant";
 import AdminRegisterProperty from "./pages/AdminRegisterProperty";
 import AdminRegisterNotifications from "./pages/AdminRegisterNotifications";
 import AdminRegisterReports from "./pages/AdminRegisterReports";
+import TenantPropertyInfo from "./pages/TenantPropertyInfo";
+import TenantPayments from "./pages/TenantPayments";
+import TenantNotifications from "./pages/TenantNotification";
+import PropertyDetailPage from "./pages/PropertyDetailPage";
 
 function App() {
   return (
@@ -27,6 +31,7 @@ function App() {
 
       {/* Placeholder Subpages */}
       <Route path="/admin/properties" element={<AdminProperties />} />
+      <Route path="/admin/properties/:id" element={<PropertyDetailPage />} />
       <Route path="/admin/properties/add" element={<AdminRegisterProperty />} />
       <Route path="/admin/tenants" element={<AdminTenants />} />
       <Route path="/admin/tenants/add" element={<AdminRegisterTenant />} />
@@ -36,10 +41,10 @@ function App() {
       <Route path="/admin/reports" element={<AdminReports />} />
       <Route path="/admin/reports/add" element={<AdminRegisterReports />} />
       {/* Placeholder Subpages for Tenant Section */}
-      <Route path="/tenant/property-info" element={<div className="p-10">🏠 Property Info Page</div>} />
+      <Route path="/tenant/property-info" element={<TenantPropertyInfo />} />
       <Route path="/tenant/profile" element={<div className="p-10">👤 Profile Page</div>} />
-      <Route path="/tenant/payments" element={<div className="p-10">💳 Payments Page</div>} />
-      <Route path="/tenant/notifications" element={<div className="p-10">🔔 Notifications Page</div>} />
+      <Route path="/tenant/payments" element={<TenantPayments />} />
+      <Route path="/tenant/notifications" element={<TenantNotifications />} />
       <Route path="/tenant/reports" element={<div className="p-10">📄 Reports Page</div>} />
 
     </Routes>

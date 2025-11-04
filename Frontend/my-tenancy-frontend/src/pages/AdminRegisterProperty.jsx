@@ -1,16 +1,21 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPropertyPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     address: "",
-    propertyType: "",
-    unitNumber: "",
-    rentPrice: "",
-    isAvailable: true,
+    property_type: "", // match Django field
+    unit_number: "",
+    rent_price: "",
+    is_available: true,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  // Handle input changes
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -19,10 +24,34 @@ const RegisterPropertyPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission (POST to Django)
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Property Registered:", formData);
-    // Later, connect to your Django API endpoint here (POST /api/properties/)
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/properties/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Failed to create property");
+      }
+
+      // Redirect back to property list
+      navigate("/admin/properties");
+    } catch (err) {
+      console.error("Error adding property:", err);
+      setError("Failed to save property. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,16 +99,15 @@ const RegisterPropertyPage = () => {
           <div>
             <label className="block font-medium mb-2">Property Type:</label>
             <select
-              name="propertyType"
-              value={formData.propertyType}
+              name="property_type"
+              value={formData.property_type}
               onChange={handleChange}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
               required
             >
               <option value="">-- Select Type --</option>
-              <option value="House">House</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Condo">Condo</option>
+              <option value="HOUSE">House</option>
+              <option value="APARTMENT">Apartment</option>
             </select>
           </div>
 
@@ -87,9 +115,9 @@ const RegisterPropertyPage = () => {
           <div>
             <label className="block font-medium mb-2">Unit Number:</label>
             <input
-              type="number"
-              name="unitNumber"
-              value={formData.unitNumber}
+              type="text"
+              name="unit_number"
+              value={formData.unit_number}
               onChange={handleChange}
               placeholder="Enter unit number"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
@@ -101,11 +129,12 @@ const RegisterPropertyPage = () => {
             <label className="block font-medium mb-2">Rent Price (₱):</label>
             <input
               type="number"
-              name="rentPrice"
-              value={formData.rentPrice}
+              name="rent_price"
+              value={formData.rent_price}
               onChange={handleChange}
               placeholder="Enter rent price"
               className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
+              required
             />
           </div>
 
@@ -113,27 +142,34 @@ const RegisterPropertyPage = () => {
           <div className="flex items-center gap-3">
             <input
               type="checkbox"
-              name="isAvailable"
-              checked={formData.isAvailable}
+              name="is_available"
+              checked={formData.is_available}
               onChange={handleChange}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
             <label className="font-medium">Is Available</label>
           </div>
 
+          {/* Error Message */}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
+              onClick={() => navigate("/admin/properties")}
               className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-5 py-2 rounded-xl transition"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-xl shadow hover:opacity-90 transition"
+              disabled={loading}
+              className={`bg-gradient-to-r from-purple-500 to-blue-500 text-white px-6 py-2 rounded-xl shadow hover:opacity-90 transition ${
+                loading && "opacity-60 cursor-not-allowed"
+              }`}
             >
-              Save Property
+              {loading ? "Saving..." : "Save Property"}
             </button>
           </div>
         </form>

@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import API from "../api/axios";
 
 const TenantsPage = () => {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const [tenants, setTenants] = useState([]);
+
+  useEffect(() => {
+    const fetchTenants = async () => {
+      try {
+        const res = await API.get("tenants/");
+        setTenants(res.data);
+      } catch (err) {
+        console.error("Failed to fetch tenants:", err);
+      }
+    };
+    fetchTenants();
+  }, []);
+
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
       <Navbar />
@@ -19,11 +34,13 @@ const navigate = useNavigate();
       </header>
 
       <main className="p-8">
-        <div className="bg-white shadow-lg rounded-2xl p-6">
+        <div className="bg-white shadow-lg rounded-2xl p-6 overflow-x-auto">
           <table className="min-w-full border-collapse w-full">
             <thead>
               <tr className="text-left bg-gray-100">
                 <th className="py-3 px-4 rounded-tl-lg">Full Name</th>
+                <th className="py-3 px-4">Username</th>
+                <th className="py-3 px-4">Email</th>
                 <th className="py-3 px-4">Phone Number</th>
                 <th className="py-3 px-4">Property</th>
                 <th className="py-3 px-4">Lease Start</th>
@@ -34,18 +51,30 @@ const navigate = useNavigate();
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t hover:bg-gray-50">
-                <td className="py-3 px-4 text-blue-600 font-medium hover:underline cursor-pointer">
-                  bonbon.acm
-                </td>
-                <td className="py-3 px-4">-</td>
-                <td className="py-3 px-4">-</td>
-                <td className="py-3 px-4">Oct 29, 2025</td>
-                <td className="py-3 px-4">₱0.01</td>
-                <td className="py-3 px-4">₱0.01</td>
-                <td className="py-3 px-4">Nov 29, 2025</td>
-                <td className="py-3 px-4 text-green-500 font-semibold">Active</td>
-              </tr>
+              {tenants.length > 0 ? (
+                tenants.map((tenant) => (
+                  <tr key={tenant.id} className="border-t hover:bg-gray-50">
+                    <td className="py-3 px-4 font-medium">{tenant.full_name}</td>
+                    <td className="py-3 px-4 text-gray-600">{tenant.username}</td>
+                    <td className="py-3 px-4">{tenant.email}</td>
+                    <td className="py-3 px-4">{tenant.phone_number || "-"}</td>
+                    <td className="py-3 px-4">{tenant.property || "-"}</td>
+                    <td className="py-3 px-4">{tenant.lease_start_date}</td>
+                    <td className="py-3 px-4">₱{tenant.monthly_rent}</td>
+                    <td className="py-3 px-4">₱{tenant.security_deposit}</td>
+                    <td className="py-3 px-4">{tenant.lease_end_date}</td>
+                    <td className="py-3 px-4 text-green-500 font-semibold">
+                      {tenant.is_active ? "Active" : "Inactive"}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="10" className="text-center py-6 text-gray-500">
+                    No tenants found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
