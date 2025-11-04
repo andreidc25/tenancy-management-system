@@ -1,18 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 
 const ReportsPage = () => {
-const navigate = useNavigate();  
+  const [reports, setReports] = useState([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/reports/all/")
+      .then((res) => res.json())
+      .then((data) => setReports(data.reports))
+      .catch((err) => console.error("Error fetching reports:", err));
+  }, []);
+
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
       <Navbar />
 
       <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Reports</h2>
-        <button 
-            onClick={() => navigate("/admin/reports/add")}
-            className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-5 py-2 rounded-xl shadow hover:opacity-90 transition">
+        <button
+          onClick={() => navigate("/admin/reports/add")}
+          className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-5 py-2 rounded-xl shadow hover:opacity-90 transition"
+        >
           + Add Report
         </button>
       </header>
@@ -29,14 +39,40 @@ const navigate = useNavigate();
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t hover:bg-gray-50">
-                <td className="py-3 px-4 text-blue-600 font-medium hover:underline cursor-pointer">
-                  Sirang Tubo
-                </td>
-                <td className="py-3 px-4">bonbon.acm</td>
-                <td className="py-3 px-4 text-yellow-500 font-semibold">In Progress</td>
-                <td className="py-3 px-4">Oct 29, 2025, 6:06 a.m.</td>
-              </tr>
+              {reports.length > 0 ? (
+                reports.map((report) => (
+                  <tr
+                    key={report.id}
+                    className="border-t hover:bg-gray-50 cursor-pointer"
+                  >
+                    <td className="py-3 px-4 text-blue-600 font-medium hover:underline">
+                      {report.title}
+                    </td>
+                    <td className="py-3 px-4">{report.tenant}</td>
+                    <td
+                      className={`py-3 px-4 font-semibold ${
+                        report.status === "Resolved"
+                          ? "text-green-500"
+                          : report.status === "In Progress"
+                          ? "text-yellow-500"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {report.status}
+                    </td>
+                    <td className="py-3 px-4">{report.created_at}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="4"
+                    className="py-6 text-center text-gray-400 italic"
+                  >
+                    No reports found
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
