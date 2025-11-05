@@ -19,6 +19,12 @@ const ReportsPage = () => {
 
       <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">Reports</h2>
+        <button
+          onClick={() => navigate("/tenant/reports/add")}
+          className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-5 py-2 rounded-xl shadow hover:opacity-90 transition"
+        >
+          + Add Report
+        </button>
       </header>
 
       <main className="p-8">
