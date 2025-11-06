@@ -1,7 +1,17 @@
 from rest_framework import serializers
-from .models import TenantNotification
+from .models import Notification
+from tenants.models import TenantProfile
 
-class TenantNotificationSerializer(serializers.ModelSerializer):
+class NotificationSerializer(serializers.ModelSerializer):
+    tenant_username = serializers.SerializerMethodField()
+
     class Meta:
-        model = TenantNotification
-        fields = ['tenant', 'title', 'message', 'created_at']
+        model = Notification
+        fields = [
+            'id', 'tenant', 'tenant_username',
+            'title', 'message',
+            'notification_type', 'is_read', 'created_at'
+        ]
+
+    def get_tenant_username(self, obj):
+        return obj.tenant.user.username if obj.tenant else "All Tenants"
