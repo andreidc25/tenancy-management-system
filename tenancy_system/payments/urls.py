@@ -1,6 +1,8 @@
-from django.urls import path
-from .views import PaymentHistoryAPIView # Import your new view
+# payments/urls.py
+from rest_framework.routers import DefaultRouter
+from .views import PaymentViewSet
 
-urlpatterns = [
-    path('api/history/', PaymentHistoryAPIView.as_view(), name='api_payment_history'),
-]
+router = DefaultRouter()
+router.register(r'', PaymentViewSet, basename='payments')
+
+urlpatterns = router.urls
