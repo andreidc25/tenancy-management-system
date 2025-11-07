@@ -13,6 +13,7 @@ from .models import TenantProfile
 from .serializers import TenantProfileSerializer
 from properties.models import Property
 import secrets
+from rest_framework.decorators import action
 
 
 # --------------------- #
@@ -82,6 +83,17 @@ class TenantViewSet(viewsets.ModelViewSet):
     serializer_class = TenantProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    
+ # ✅ New endpoint to get the logged-in tenant profile
+    @action(detail=False, methods=['get'], url_path='profile')
+    def profile(self, request):
+        try:
+            tenant = TenantProfile.objects.get(user=request.user)
+        except TenantProfile.DoesNotExist:
+            return Response({"error": "Tenant profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(tenant)
+        return Response(serializer.data)
 
 # ✅ NEW: Tenant Registration (admin creates + email invite)
 class TenantRegistrationViewSet(viewsets.ViewSet):

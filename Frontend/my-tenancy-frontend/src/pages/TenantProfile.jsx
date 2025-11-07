@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from '../components/Navbar';
+import Navbar from "../components/Navbar";
 import TenantInfoCard from "../components/TenantInfoCard";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -16,28 +16,35 @@ import {
   FileText,
   User,
   ArrowLeft,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
-
-// Mock tenant data - replace with your actual data source
-const mockTenantData = {
-  fullName: "Juan Renter",
-  phone: "09226241103",
-  email: "juan.renter@example.com",
-  property: "Sunset Villa - Unit A1",
-  address: "123 Sunset Boulevard, Manila",
-  leaseStartDate: "Nov. 4, 2025",
-  leaseEndDate: "Nov. 4, 2026",
-  monthlyRent: 15000.00,
-  securityDeposit: 4000.00,
-  isActive: true,
-  paymentStatus: "Paid",
-  emergencyContact: "Maria Renter - 09220265793"
-};
+import API from "../api/axios";
 
 const TenantProfile = () => {
   const navigate = useNavigate();
-  const [tenant] = useState(mockTenantData);
+  const [tenant, setTenant] = useState(null);
+
+  // ✅ Fetch tenant data from backend
+  useEffect(() => {
+    const fetchTenantProfile = async () => {
+      try {
+        const res = await API.get("tenants/profile/");
+        console.log("Fetched tenant profile:", res.data);
+        setTenant(res.data);
+      } catch (err) {
+        console.error("Failed to fetch tenant profile:", err);
+      }
+    };
+    fetchTenantProfile();
+  }, []);
+
+  if (!tenant) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
 
   const handleLogout = () => {
     navigate("/");
@@ -49,47 +56,37 @@ const TenantProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar
-        title="Tenant Profile"
-        userName={tenant.fullName}
-        onLogout={handleLogout}
-      />
+      <Navbar title="Tenant Profile" userName={tenant.full_name} onLogout={handleLogout} />
 
       <main className="container mx-auto px-6 py-8">
-        <Button
-          variant="outline"
-          onClick={handleBack}
-          className="mb-6 gap-2"
-        >
+        <Button variant="outline" onClick={handleBack} className="mb-6 gap-2">
           <ArrowLeft className="w-4 h-4" />
           Back
         </Button>
 
-        {/* Status Cards (animated, dashboard style) */}
+        {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <TenantInfoCard
             title="Property"
-            value={tenant.property.split(" - ")[0]}
+            value={tenant.property ? tenant.property.split(" - ")[0] : "N/A"}
             icon={Home}
             color="blue"
-            delay={0.1}
           />
           <TenantInfoCard
             title="Monthly Rent"
-            value={`₱${tenant.monthlyRent.toLocaleString()}`}
+            value={`₱${tenant.monthly_rent?.toLocaleString() ?? 0}`}
             icon={DollarSign}
             color="green"
-            delay={0.2}
           />
           <TenantInfoCard
             title="Security Deposit"
-            value={`₱${tenant.securityDeposit.toLocaleString()}`}
+            value={`₱${tenant.security_deposit?.toLocaleString() ?? 0}`}
             icon={CreditCard}
             color="orange"
-            delay={0.3}
           />
         </div>
 
+        {/* Info Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Personal Information */}
           <Card>
@@ -104,14 +101,14 @@ const TenantProfile = () => {
                 <User className="w-5 h-5 text-gray-500 mt-1" />
                 <div>
                   <p className="text-sm text-gray-500">Full Name</p>
-                  <p className="font-semibold">{tenant.fullName}</p>
+                  <p className="font-semibold">{tenant.full_name}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="w-5 h-5 text-gray-500 mt-1" />
                 <div>
                   <p className="text-sm text-gray-500">Phone Number</p>
-                  <p className="font-semibold">{tenant.phone}</p>
+                  <p className="font-semibold">{tenant.phone_number || "N/A"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -119,13 +116,6 @@ const TenantProfile = () => {
                 <div>
                   <p className="text-sm text-gray-500">Email</p>
                   <p className="font-semibold">{tenant.email}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Phone className="w-5 h-5 text-gray-500 mt-1" />
-                <div>
-                  <p className="text-sm text-gray-500">Emergency Contact</p>
-                  <p className="font-semibold">{tenant.emergencyContact}</p>
                 </div>
               </div>
             </CardContent>
@@ -144,14 +134,16 @@ const TenantProfile = () => {
                 <Home className="w-5 h-5 text-gray-500 mt-1" />
                 <div>
                   <p className="text-sm text-gray-500">Property</p>
-                  <p className="font-semibold">{tenant.property}</p>
+                  <p className="font-semibold">{tenant.property || "N/A"}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-gray-500 mt-1" />
                 <div>
                   <p className="text-sm text-gray-500">Address</p>
-                  <p className="font-semibold">{tenant.address}</p>
+                  <p className="font-semibold">
+                    {tenant.address || "Address not available"}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -159,10 +151,10 @@ const TenantProfile = () => {
                 <div>
                   <p className="text-sm text-gray-500">Status</p>
                   <Badge
-                    variant={tenant.isActive ? "default" : "secondary"}
+                    variant={tenant.is_active ? "default" : "secondary"}
                     className="mt-1"
                   >
-                    {tenant.isActive ? "Active" : "Inactive"}
+                    {tenant.is_active ? "Active" : "Inactive"}
                   </Badge>
                 </div>
               </div>
@@ -182,14 +174,14 @@ const TenantProfile = () => {
                 <Calendar className="w-5 h-5 text-gray-500 mt-1" />
                 <div>
                   <p className="text-sm text-gray-500">Lease Start Date</p>
-                  <p className="font-semibold">{tenant.leaseStartDate}</p>
+                  <p className="font-semibold">{tenant.lease_start_date}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Calendar className="w-5 h-5 text-gray-500 mt-1" />
                 <div>
                   <p className="text-sm text-gray-500">Lease End Date</p>
-                  <p className="font-semibold">{tenant.leaseEndDate}</p>
+                  <p className="font-semibold">{tenant.lease_end_date}</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -197,7 +189,7 @@ const TenantProfile = () => {
                 <div>
                   <p className="text-sm text-gray-500">Monthly Rent</p>
                   <p className="font-semibold">
-                    ₱{tenant.monthlyRent.toLocaleString()}.00
+                    ₱{tenant.monthly_rent?.toLocaleString() ?? 0}.00
                   </p>
                 </div>
               </div>
@@ -206,7 +198,7 @@ const TenantProfile = () => {
                 <div>
                   <p className="text-sm text-gray-500">Security Deposit</p>
                   <p className="font-semibold">
-                    ₱{tenant.securityDeposit.toLocaleString()}.00
+                    ₱{tenant.security_deposit?.toLocaleString() ?? 0}.00
                   </p>
                 </div>
               </div>
@@ -227,7 +219,7 @@ const TenantProfile = () => {
                 <div>
                   <p className="text-sm text-gray-500">Current Status</p>
                   <Badge variant="default" className="mt-1 bg-green-500">
-                    {tenant.paymentStatus}
+                    Paid
                   </Badge>
                 </div>
               </div>
@@ -236,7 +228,7 @@ const TenantProfile = () => {
                 <div>
                   <p className="text-sm text-gray-500">Total Deposit</p>
                   <p className="font-semibold">
-                    ₱{tenant.securityDeposit.toLocaleString()}.00
+                    ₱{tenant.security_deposit?.toLocaleString() ?? 0}.00
                   </p>
                 </div>
               </div>
