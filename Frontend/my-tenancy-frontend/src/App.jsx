@@ -17,7 +17,7 @@ import TenantNotifications from "./pages/TenantNotification";
 import PropertyDetailPage from "./pages/PropertyDetailPage";
 import TenantReports from "./pages/TenantReports";
 import AdminPayments from "./pages/AdminPayments";
-
+import TenantProfile from "./pages/TenantProfile";
 function App() {
   return (
     
@@ -43,7 +43,7 @@ function App() {
       <Route path="/admin/reports" element={<AdminReports />} />
       {/* Placeholder Subpages for Tenant Section */}
       <Route path="/tenant/property-info" element={<TenantPropertyInfo />} />
-      <Route path="/tenant/profile" element={<div className="p-10">👤 Profile Page</div>} />
+      <Route path="/tenant/profile" element={<TenantProfile />} />
       <Route path="/tenant/payments" element={<TenantPayments />} />
       <Route path="/tenant/notifications" element={<TenantNotifications />} />
       <Route path="/tenant/reports" element={<TenantReports />} />

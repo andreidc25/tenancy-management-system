@@ -7,6 +7,6 @@ html, body, #root {
   margin: 0;
   padding: 0;
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(to right, #f3f4f6, #e5e7eb); /* light gradient */
+  background: linear-gradient(to right, #f8fafc, #e5e7eb); /* subtle gradient */
   color: #111827;
 }
