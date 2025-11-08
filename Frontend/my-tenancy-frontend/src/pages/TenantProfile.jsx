@@ -28,20 +28,47 @@ const TenantProfile = () => {
   useEffect(() => {
     const fetchTenantProfile = async () => {
       try {
+        // Log the current token before making the request
+        const token = localStorage.getItem("access_token");
+        console.log("Current token in TenantProfile:", token ? token.substring(0, 20) + "..." : "No token");
+
         const res = await API.get("tenants/profile/");
         console.log("Fetched tenant profile:", res.data);
         setTenant(res.data);
       } catch (err) {
-        console.error("Failed to fetch tenant profile:", err);
+        console.error("Failed to fetch tenant profile:", err.response?.status, err.response?.data);
+        // If token is invalid, redirect to login
+        if (err.response?.status === 403) {
+          console.log("Token might be invalid, clearing localStorage");
+          localStorage.clear();
+          navigate("/");
+        }
       }
     };
     fetchTenantProfile();
-  }, []);
+  }, [navigate]);
 
-  if (!tenant) {
+  const [error, setError] = useState(null);
+
+  if (!tenant && !error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p className="text-gray-600">Loading profile...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button 
+            onClick={() => navigate("/")} 
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+            Return to Login
+          </button>
+        </div>
       </div>
     );
   }

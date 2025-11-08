@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { CreditCard, CheckCircle, XCircle, Loader2, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import BackButton from '../components/BackButton';
 
 export default function TenantPayments() {
   const navigate = useNavigate();
@@ -130,6 +131,7 @@ export default function TenantPayments() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-3xl">
+        <BackButton />
         <div className="bg-white rounded-xl shadow-md p-8">
           {/* Alerts */}
           {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded">{error}</div>}

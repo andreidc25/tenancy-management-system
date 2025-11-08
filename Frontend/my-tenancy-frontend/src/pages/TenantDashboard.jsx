@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Home, User, CreditCard, Bell, FileText, LogOut } from "lucide-react";
+import { Home, User, CreditCard, Bell, FileText } from "lucide-react";
+import Navbar from "../components/Navbar";
 
 export default function TenantDashboard() {
   const navigate = useNavigate();
@@ -13,25 +14,9 @@ export default function TenantDashboard() {
     { title: "Reports", icon: <FileText size={40} />, color: "from-rose-500 to-rose-600", route: "/tenant/reports" },
   ];
 
-  const handleLogout = () => {
-    navigate("/"); // Redirect back to login page
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-gray-900 text-white flex justify-between items-center px-8 py-4 shadow-md">
-        <h1 className="text-xl font-semibold tracking-wide">Dashboard</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-200">Welcome, Client</span>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition"
-          >
-            <LogOut size={16} /> Logout
-          </button>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Dashboard Cards */}
       <main className="flex-grow flex flex-col items-center justify-center px-6 py-10">
