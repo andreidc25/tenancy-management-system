@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Report
 from .serializers import ReportSerializer 
+from rest_framework import status
+
 
 
 @login_required
@@ -50,3 +52,22 @@ def get_tenant_reports(request):
     reports = Report.objects.filter(tenant=tenant).order_by('-created_at')
     serializer = ReportSerializer(reports, many=True)
     return Response({"reports": serializer.data})
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_tenant_report(request):
+    try:
+        tenant = request.user.tenant_profile  # ✅ Correct relationship name
+    except Exception:
+        return Response({"error": "Tenant profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ReportSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(tenant=tenant)
+        return Response(
+            {"message": "Report submitted successfully", "report": serializer.data},
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
