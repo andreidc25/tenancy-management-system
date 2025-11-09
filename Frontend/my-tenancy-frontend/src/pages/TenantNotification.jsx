@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
+import BackButton from '../components/BackButton';
 import { Bell, Check, RefreshCw, Trash2 } from 'lucide-react';
 
 export default function TenantNotifications() {
@@ -117,6 +118,7 @@ export default function TenantNotifications() {
       <Navbar />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        <BackButton />
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
