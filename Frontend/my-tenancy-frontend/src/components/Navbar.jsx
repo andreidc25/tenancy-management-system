@@ -47,18 +47,20 @@ const Navbar = () => {
     <nav className="bg-[#0d1726] text-white px-8 py-4 flex justify-between items-center shadow-lg">
       <h1 className="text-xl font-bold">Tenancy System</h1>
       <div className="flex items-center gap-4">
-            <span className="font-medium flex items-center gap-2">
-              <span className="text-white">Welcome, {username || 'Guest'}</span>
-              {userType && (
-                <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
-                  userType === 'Admin' 
-                    ? 'bg-red-500 text-white' 
-                    : 'bg-emerald-500 text-white'
-                }`}>
-                  {userType}
-                </span>
-              )}
-            </span>
+            {username && (
+              <span className="font-medium flex items-center gap-2">
+                <span className="text-white">{username}</span>
+                {userType && (
+                  <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${
+                    userType === 'Admin' 
+                      ? 'bg-red-500 text-white' 
+                      : 'bg-emerald-500 text-white'
+                  }`}>
+                    {userType}
+                  </span>
+                )}
+              </span>
+            )}
         <button 
             onClick={handleLogout}
             className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition">
