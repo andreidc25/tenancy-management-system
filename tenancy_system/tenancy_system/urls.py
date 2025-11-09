@@ -22,7 +22,7 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls')),
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/payments/', include('payments.urls')),  # payment endpoints
-    path('reports/', include('reports.urls')),
+    path('api/reports/', include('reports.urls')),
 ]
 
 if settings.DEBUG:
