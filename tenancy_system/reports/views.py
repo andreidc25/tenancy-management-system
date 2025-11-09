@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from .models import Report
 from .serializers import ReportSerializer 
 from rest_framework import status
+from notifications.models import Notification  # ✅ add this import
+from django.contrib.auth.models import User  # to identify admins
 
 
 
@@ -65,6 +67,37 @@ def create_tenant_report(request):
     serializer = ReportSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(tenant=tenant)
+        return Response(
+            {"message": "Report submitted successfully", "report": serializer.data},
+            status=status.HTTP_201_CREATED
+        )
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_tenant_report(request):
+    try:
+        tenant = request.user.tenant_profile
+    except Exception:
+        return Response({"error": "Tenant profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ReportSerializer(data=request.data)
+    if serializer.is_valid():
+        report = serializer.save(tenant=tenant)
+
+        # ✅ Create notification for admin
+        try:
+            # You can target all admins or a specific one
+            admins = User.objects.filter(is_superuser=True)
+            for admin in admins:
+                Notification.objects.create(
+                    recipient=admin,
+                    message=f"New report submitted by {tenant.user.username}: '{report.title}'"
+                )
+        except Exception as e:
+            print("⚠️ Failed to create admin notification:", e)
+
         return Response(
             {"message": "Report submitted successfully", "report": serializer.data},
             status=status.HTTP_201_CREATED
