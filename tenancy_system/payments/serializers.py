@@ -16,7 +16,8 @@ class PaymentSerializer(serializers.ModelSerializer):
             'payment_date',
             'payment_method',
             'status',
-            'notes'
+            'notes',
+            'proof',
         ]
 
     def get_tenant_name(self, obj):

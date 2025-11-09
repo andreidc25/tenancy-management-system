@@ -9,6 +9,7 @@ from tenants.views import TenantViewSet, TenantRegistrationViewSet
 from properties.views import PropertyViewSet
 from notifications.views import NotificationViewSet
 
+
 router = DefaultRouter()
 router.register(r'tenants', TenantViewSet, basename='tenant')
 router.register(r'properties', PropertyViewSet, basename='property')
@@ -23,7 +24,9 @@ urlpatterns = [
     path('api/auth/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/payments/', include('payments.urls')),  # payment endpoints
     path('api/reports/', include('reports.urls')),
-]
+    path('api/tenants/', include('tenants.urls')),
+
+] 
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
