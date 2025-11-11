@@ -84,3 +84,24 @@ def tenant_balance(request, tenant_id):
         'lease_end_date': lease_end,
         'overdue': overdue,
     })
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def tenant_payment_history(request):
+    """Return recent payment history for the logged-in tenant."""
+    tenant = TenantProfile.objects.filter(user=request.user).first()
+    if not tenant:
+        return Response({"error": "Tenant profile not found"}, status=404)
+
+    payments = Payment.objects.filter(tenant=tenant).order_by('-payment_date')[:10]
+    data = [
+        {
+            "id": p.id,
+            "amount": float(p.amount),
+            "status": p.status,
+            "payment_date": p.payment_date,
+            "method": p.payment_method,  # ✅ fixed field name
+        }
+        for p in payments
+    ]
+    return Response(data)

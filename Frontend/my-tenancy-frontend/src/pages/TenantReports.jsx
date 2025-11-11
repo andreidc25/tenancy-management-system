@@ -15,12 +15,16 @@ export default function TenantReports() {
       try {
         const res = await API.get("reports/tenant/");
         console.log("Reports data:", res.data);
-        setReports(res.data.reports || []);
+        setReports(res.data || []); // ✅ fixed line
       } catch (err) {
         console.error("Error fetching reports:", err);
         if (err.response?.status === 403) {
           localStorage.clear();
           navigate("/");
+        } else if (err.response?.status === 404) {
+          setReports([]);
+        } else {
+          alert("Failed to load reports. Please try again later.");
         }
       } finally {
         setLoading(false);
@@ -74,19 +78,21 @@ export default function TenantReports() {
                         <td className="py-3 px-4 text-blue-600 font-medium hover:underline">
                           {report.title}
                         </td>
-                        <td className="py-3 px-4">{report.tenant}</td>
+                        <td className="py-3 px-4">{report.tenant_name || "You"}</td>
                         <td
                           className={`py-3 px-4 font-semibold ${
-                            report.status === "Resolved"
+                            report.status === "RESOLVED"
                               ? "text-green-500"
-                              : report.status === "In Progress"
+                              : report.status === "IN_PROGRESS"
                               ? "text-yellow-500"
                               : "text-gray-500"
                           }`}
                         >
-                          {report.status}
+                          {report.status.replace("_", " ")}
                         </td>
-                        <td className="py-3 px-4">{report.created_at}</td>
+                        <td className="py-3 px-4">
+                          {new Date(report.created_at).toLocaleDateString()}
+                        </td>
                       </tr>
                     ))
                   ) : (

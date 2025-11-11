@@ -1,9 +1,12 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import AdminDashboard from "./pages/AdminDashboard";
-import TenantDashboard from "./pages/TenantDashboard";
+import { Routes, Route, Navigate } from "react-router-dom";
+
+// 🔑 Auth & Routing
 import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
+
+// 🏢 Admin Pages
+import AdminDashboard from "./pages/AdminDashboard";
 import AdminProperties from "./pages/AdminProperties";
 import AdminTenants from "./pages/AdminTenants";
 import AdminNotifications from "./pages/AdminNotifications";
@@ -11,27 +14,35 @@ import AdminReports from "./pages/AdminReports";
 import AdminRegisterTenant from "./pages/AdminRegisterTenant";
 import AdminRegisterProperty from "./pages/AdminRegisterProperty";
 import AdminRegisterNotifications from "./pages/AdminRegisterNotifications";
-import TenantRegisterReports from "./pages/TenantRegisterReports";
-import TenantPropertyInfo from "./pages/TenantPropertyInfo";
-import TenantPayments from "./pages/TenantPayments";
-import TenantNotifications from "./pages/TenantNotification";
-import PropertyDetailPage from "./pages/PropertyDetailPage";
-import TenantReports from "./pages/TenantReports";
 import AdminPayments from "./pages/AdminPayments";
+import PropertyDetailPage from "./pages/PropertyDetailPage";
+
+// 👤 Tenant Pages
+import TenantDashboard from "./pages/TenantDashboard";
+import TenantPropertyInfo from "./pages/TenantPropertyInfo";
 import TenantProfile from "./pages/TenantProfile";
+import TenantPayments from "./pages/TenantPayments";
 import PaymentCash from "./pages/PaymentCash";
 import PaymentOnline from "./pages/PaymentOnline";
 import PaymentBank from "./pages/PaymentBank";
+import TenantNotifications from "./pages/TenantNotification";
+import TenantReports from "./pages/TenantReports";
+import TenantRegisterReports from "./pages/TenantRegisterReports";
+import TenantReportDetail from "./pages/TenantReportDetail";
 
 function App() {
   return (
     <Routes>
-      {/* Public */}
+      {/* 🏠 Public Route */}
       <Route path="/" element={<LoginPage />} />
 
-      {/* Admin Routes */}
+      {/* 🧭 Redirect base admin/tenant paths to their dashboards */}
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/tenant" element={<Navigate to="/tenant/dashboard" replace />} />
+
+      {/* 🏢 ADMIN ROUTES */}
       <Route
-        path="/admin"
+        path="/admin/dashboard"
         element={
           <ProtectedRoute allowedRole="admin">
             <AdminDashboard />
@@ -111,9 +122,9 @@ function App() {
         }
       />
 
-      {/* Tenant Routes */}
+      {/* 👤 TENANT ROUTES */}
       <Route
-        path="/tenant"
+        path="/tenant/dashboard"
         element={
           <ProtectedRoute allowedRole="tenant">
             <TenantDashboard />
@@ -192,6 +203,17 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/tenant/reports/:id"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantReportDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 🧩 Catch-all route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

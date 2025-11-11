@@ -1,55 +1,75 @@
-import { Card } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { MapPin, Bed, Bath, Square } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import API from "../api/axios";
+import { Home, MapPin, Building2, DollarSign, Calendar } from "lucide-react";
 
 const PropertyOverview = () => {
+  const [property, setProperty] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProperty = async () => {
+      try {
+        const res = await API.get("dashboard/tenant-property/");
+        setProperty(res.data);
+      } catch (err) {
+        console.error("Error loading property:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProperty();
+  }, []);
+
+  if (loading)
+    return (
+      <div className="bg-white shadow-md rounded-2xl p-6 text-gray-500">
+        Loading property details...
+      </div>
+    );
+
+  if (!property)
+    return (
+      <div className="bg-white shadow-md rounded-2xl p-6 text-gray-400 italic">
+        No property assigned.
+      </div>
+    );
+
   return (
-    <Card className="h-[270px] flex flex-col">
-      <div className="p-4 flex-1 overflow-y-auto">
-        <h3 className="text-lg font-semibold text-foreground mb-3">Your Property</h3>
-        
-        <div className="space-y-3">
-        <div className="h-24 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center">
-          <Building2 className="h-10 w-10 text-muted-foreground" />
-        </div>
-        
-        <div>
-          <h4 className="font-semibold text-foreground mb-1">Apartment 304</h4>
-          <div className="flex items-center gap-1 text-sm text-muted-foreground mb-2">
-            <MapPin className="h-4 w-4" />
-            <span>123 Main Street, Downtown, CA 90210</span>
-          </div>
-          
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            <div className="flex items-center gap-1 p-2 rounded-lg bg-secondary">
-              <Bed className="h-4 w-4 text-primary" />
-              <span className="text-sm text-foreground">2 Beds</span>
-            </div>
-            <div className="flex items-center gap-1 p-2 rounded-lg bg-secondary">
-              <Bath className="h-4 w-4 text-primary" />
-              <span className="text-sm text-foreground">2 Bath</span>
-            </div>
-            <div className="flex items-center gap-1 p-2 rounded-lg bg-secondary">
-              <Square className="h-4 w-4 text-primary" />
-              <span className="text-sm text-foreground">950 sqft</span>
-            </div>
-          </div>
-          
-          <Button className="w-full" variant="outline" size="sm">
-            View Details
-          </Button>
-        </div>
+    <div className="bg-white shadow-md rounded-2xl p-6 space-y-4 hover:shadow-lg transition-shadow duration-300">
+      <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+        <Home className="text-blue-600" size={22} /> Property Overview
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 text-gray-700 text-sm">
+        <p className="flex items-center gap-2">
+          <MapPin className="text-gray-400" size={16} />
+          <span className="font-medium">Address:</span> {property.address}
+        </p>
+
+        <p className="flex items-center gap-2">
+          <Building2 className="text-gray-400" size={16} />
+          <span className="font-medium">Type:</span> {property.property_type}
+        </p>
+
+        <p className="flex items-center gap-2">
+          <Home className="text-gray-400" size={16} />
+          <span className="font-medium">Unit:</span> {property.unit_number || "N/A"}
+        </p>
+
+        <p className="flex items-center gap-2">
+          <DollarSign className="text-gray-400" size={16} />
+          <span className="font-medium">Rent:</span> ₱{property.rent_price}
+        </p>
+
+        <p className="flex items-center gap-2 sm:col-span-2">
+          <Calendar className="text-gray-400" size={16} />
+          <span className="font-medium">Lease:</span>{" "}
+          {new Date(property.lease_start_date).toLocaleDateString()} —{" "}
+          {new Date(property.lease_end_date).toLocaleDateString()}
+        </p>
       </div>
-      </div>
-    </Card>
+    </div>
   );
 };
-
-// Simple Building icon for the placeholder
-const Building2 = ({ className }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-  </svg>
-);
 
 export default PropertyOverview;
