@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import API from "../api/axios"; // ✅ use axios instance for consistency
+import API from "../api/axios";
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
@@ -12,20 +12,17 @@ const ReportsPage = () => {
   useEffect(() => {
     const fetchReports = async () => {
       setLoading(true);
-      setError("");
-
       try {
-        // ✅ Updated endpoint — now correctly under /api/
         const res = await API.get("reports/all/");
-        setReports(res.data.reports || []);
+        console.log("Admin reports:", res.data);
+        setReports(res.data);
       } catch (err) {
         console.error("Error fetching reports:", err);
-        setError("Failed to fetch reports. Please try again later.");
+        setError("Failed to load reports.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchReports();
   }, []);
 
@@ -59,9 +56,7 @@ const ReportsPage = () => {
                     <tr
                       key={report.id}
                       className="border-t hover:bg-gray-50 cursor-pointer"
-                      onClick={() =>
-                        navigate(`/admin/reports/${report.id}`)
-                      } // optional: navigate to report details
+                      onClick={() => navigate(`/admin/reports/${report.id}`)}
                     >
                       <td className="py-3 px-4 text-blue-600 font-medium hover:underline">
                         {report.title}

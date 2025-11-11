@@ -92,25 +92,16 @@ def rent_collection_summary(request):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])
 def admin_dashboard_stats(request):
-    """Return overall admin dashboard statistics."""
     total_properties = Property.objects.count()
     total_tenants = TenantProfile.objects.count()
 
-    occupancy_rate = 0
-    if total_properties > 0:
-        occupancy_rate = round((total_tenants / total_properties) * 100, 2)
+    occupancy_rate = round((total_tenants / total_properties) * 100, 2) if total_properties else 0
 
-    # Count maintenance requests (if you have such a model)
-    maintenance_requests = 0
-    try:
-        from maintenance.models import MaintenanceRequest
-        maintenance_requests = MaintenanceRequest.objects.filter(
-            Q(status='Pending') | Q(status='In Progress')
-        ).count()
-    except:
-        pass
+    # ✅ Maintenance Requests = Report statuses
+    maintenance_requests = Report.objects.filter(
+        status__in=['SUBMITTED', 'IN_PROGRESS']
+    ).count()
 
-    # Example of new tenants this month
     new_tenants_this_month = TenantProfile.objects.filter(
         created_at__month=date.today().month
     ).count()

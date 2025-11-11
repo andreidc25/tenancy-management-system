@@ -16,6 +16,7 @@ import AdminRegisterProperty from "./pages/AdminRegisterProperty";
 import AdminRegisterNotifications from "./pages/AdminRegisterNotifications";
 import AdminPayments from "./pages/AdminPayments";
 import PropertyDetailPage from "./pages/PropertyDetailPage";
+import AdminReportDetail from "./pages/AdminReportDetail";
 
 // 👤 Tenant Pages
 import TenantDashboard from "./pages/TenantDashboard";
@@ -120,6 +121,14 @@ function App() {
             <AdminReports />
           </ProtectedRoute>
         }
+      />
+      <Route
+          path="/admin/reports/:id"
+          element={
+            <ProtectedRoute allowedRole="admin">
+              <AdminReportDetail />
+            </ProtectedRoute>
+          }
       />
 
       {/* 👤 TENANT ROUTES */}

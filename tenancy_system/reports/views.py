@@ -5,6 +5,7 @@ from rest_framework import status
 from tenants.models import TenantProfile
 from .models import Report
 from .serializers import ReportSerializer
+from rest_framework.permissions import IsAdminUser
 
 
 # ✅ Tenant: View their reports
@@ -85,3 +86,63 @@ def get_tenant_report_detail(request, report_id):
 
     serializer = ReportSerializer(report)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_all_reports(request):
+    reports = Report.objects.select_related('tenant__user').order_by('-created_at')
+    data = [
+        {
+            "id": r.id,
+            "tenant": r.tenant.user.get_full_name() or r.tenant.user.username,
+            "property": str(r.tenant.property) if r.tenant.property else "N/A",
+            "title": r.title,
+            "message": r.message,
+            "status": r.status.replace("_", " ").title(),
+            "created_at": r.created_at.strftime("%b %d, %Y"),
+        }
+        for r in reports
+    ]
+    return Response(data)
+
+# Existing get_all_reports() remains
+
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_report_detail(request, pk):
+    """Fetch detailed info of one report"""
+    try:
+        report = Report.objects.select_related('tenant__user', 'tenant__property').get(pk=pk)
+    except Report.DoesNotExist:
+        return Response({"error": "Report not found"}, status=404)
+
+    data = {
+        "id": report.id,
+        "tenant": report.tenant.user.username,
+        "property": str(report.tenant.property) if report.tenant.property else "N/A",
+        "title": report.title,
+        "message": report.message,
+        "status": report.status,
+        "image": request.build_absolute_uri(report.image.url) if report.image else None,
+        "created_at": report.created_at.strftime("%b %d, %Y"),
+    }
+    return Response(data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def update_report_status(request, pk):
+    """Allow admin to update the report's status"""
+    try:
+        report = Report.objects.get(pk=pk)
+    except Report.DoesNotExist:
+        return Response({"error": "Report not found"}, status=404)
+
+    new_status = request.data.get('status')
+    if new_status not in ['SUBMITTED', 'IN_PROGRESS', 'RESOLVED']:
+        return Response({"error": "Invalid status value"}, status=400)
+
+    report.status = new_status
+    report.save()
+
+    return Response({"success": True, "message": "Status updated successfully", "status": report.status})
