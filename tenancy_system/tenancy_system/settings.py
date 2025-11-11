@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'core',
+    'dashboard',
+
 ]
 
 MEDIA_URL = '/media/'
