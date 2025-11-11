@@ -6,15 +6,15 @@ import { jwtDecode } from "jwt-decode";
 
 const getQuickPicks = (userType) => [
   {
-    title: "Property Info",
-    description: "View property details",
+    title: userType === 'Admin' ? "Properties" : "Property Info",
+    description: userType === 'Admin' ? "Manage all properties" : "View property details",
     icon: Building2,
     href: userType === 'Admin' ? "/admin/properties" : "/tenant/property-info",
     color: "bg-blue-500 text-white",
   },
   {
-    title: "Profile",
-    description: userType === 'Admin' ? "Manage user profiles" : "View your profile",
+    title: userType === 'Admin' ? "Tenants" : "Profile",
+    description: userType === 'Admin' ? "Manage all tenants" : "View your profile",
     icon: Users,
     href: userType === 'Admin' ? "/admin/tenants" : "/tenant/profile",
     color: "bg-green-500 text-white",
@@ -67,25 +67,39 @@ export function QuickPicks() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {picks.map((item) => (
-          <Card
-            key={item.title}
-            onClick={() => navigate(item.href)}
-            className="group cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] border border-gray-200"
-          >
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className={`rounded-lg p-3 ${item.color} shadow-md`}>
-                  <item.icon className="h-6 w-6" />
+        {picks.map((item) => {
+          // Map colors to hover background classes with more vibrant colors
+          let hoverBgClass = 'hover:bg-blue-200';
+          if (item.color === 'bg-blue-500 text-white') {
+            hoverBgClass = 'hover:bg-blue-200';
+          } else if (item.color === 'bg-green-500 text-white') {
+            hoverBgClass = 'hover:bg-green-200';
+          } else if (item.color === 'bg-amber-500 text-white') {
+            hoverBgClass = 'hover:bg-amber-200';
+          } else if (item.color === 'bg-violet-500 text-white') {
+            hoverBgClass = 'hover:bg-violet-200';
+          }
+          
+          return (
+            <Card
+              key={item.title}
+              onClick={() => navigate(item.href)}
+              className={`group cursor-pointer transition-all duration-300 hover:shadow-lg transform hover:scale-[1.02] border border-gray-200 ${hoverBgClass}`}
+            >
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className={`rounded-lg p-3 ${item.color} shadow-md transition-all duration-300 group-hover:scale-110`}>
+                    <item.icon className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-800 mb-1">{item.title}</h3>
+                    <p className="text-sm text-gray-600">{item.description}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-800 mb-1 group-hover:text-blue-600">{item.title}</h3>
-                  <p className="text-sm text-gray-600">{item.description}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

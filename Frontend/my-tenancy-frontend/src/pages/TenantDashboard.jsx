@@ -1,11 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Building2, Users, TrendingUp, Wrench } from "lucide-react";
-import { StatCard } from "../components/StatCard";
-import { RecentTenants } from "../components/RecentTenants";
-import { RentCollectionChart } from "../components/RentCollectionChart";
-import { UpcomingLeases } from "../components/UpcomingLeases";
+import { Wallet, Calendar, AlertCircle, TrendingUp } from "lucide-react";
+import { ClientStatCard } from "../components/StatCard";
 import { QuickPicks } from "../components/QuickPicks";
+import PropertyOverview from "../components/PropertyOverview";
+import PaymentHistory from "../components/PaymentHistory";
 import Navbar from "../components/Navbar";
 
 const Index = () => {
@@ -14,48 +13,50 @@ const Index = () => {
       <Navbar />
       <div className="p-8 space-y-8">
         <div>
-        <h1 className="text-3xl font-bold text-foreground">Dashboard Overview</h1>
-        <p className="text-muted-foreground mt-1">Welcome back! Here's what's happening with your properties.</p>
+        <h1 className="text-3xl font-bold text-foreground">Tenant Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Welcome back! Here's an overview of your rental information.</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard
-          title="Total Properties"
-          value={24}
-          icon={Building2}
-          trend={{ value: "12% from last month", positive: true }}
+        <ClientStatCard
+          title="Next Rent Due"
+          value="₱1,500"
+          icon={Wallet}
+          trend="Due Dec 1, 2024"
+          status="warning"
         />
-        <StatCard
-          title="Occupied Units"
-          value="92%"
-          icon={Users}
-          trend={{ value: "3% from last month", positive: true }}
+        <ClientStatCard
+          title="Lease Ends In"
+          value="8 Months"
+          icon={Calendar}
+          trend="Aug 31, 2025"
+          status="info"
         />
-        <StatCard
-          title="Rent Collection Rate"
-          value="87%"
+        <ClientStatCard
+          title="Maintenance Requests"
+          value="2"
+          icon={AlertCircle}
+          trend="1 pending response"
+          status="warning"
+        />
+        <ClientStatCard
+          title="Payment Status"
+          value="Up to Date"
           icon={TrendingUp}
-          trend={{ value: "5% from last month", positive: false }}
-        />
-        <StatCard
-          title="Pending Maintenance"
-          value={8}
-          icon={Wrench}
-          trend={{ value: "2 less than last week", positive: true }}
+          trend="All payments current"
+          status="success"
         />
       </div>
 
-      {/* Charts and Tables */}
+      {/* Property Overview and Payment History */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RentCollectionChart />
-        <UpcomingLeases />
+        <PropertyOverview />
+        <PaymentHistory />
       </div>
 
       {/* Quick Picks */}
       <QuickPicks />
-
-      <RecentTenants />
     </div>
     </>
   );
