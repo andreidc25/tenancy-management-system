@@ -1,66 +1,101 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import { Building2, Users, TrendingUp, Wrench } from "lucide-react";
+import Navbar from "../components/Navbar";
 import { StatCard } from "../components/StatCard";
-import { RecentTenants } from "../components/RecentTenants";
 import { RentCollectionChart } from "../components/RentCollectionChart";
 import { UpcomingLeases } from "../components/UpcomingLeases";
 import { QuickPicks } from "../components/QuickPicks";
-import Navbar from "../components/Navbar";
+import { RecentTenants } from "../components/RecentTenants";
+import API from "../api/axios";
 
-const AdminDashboard = () => {
+export default function AdminDashboard() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    API.get("dashboard/admin-dashboard-stats/")
+      .then((res) => {
+        setStats(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching dashboard data:", err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-8 text-lg">Loading admin dashboard...</div>
+      </>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-8 text-lg text-red-500">
+          Failed to load dashboard data.
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       <Navbar />
       <div className="p-8 space-y-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-1">Welcome back! Here's an overview of all properties and tenants.</p>
+          <h1 className="text-3xl font-bold text-foreground">
+            Admin Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Welcome back! Here's an overview of all properties and tenants.
+          </p>
         </div>
 
-        {/* Stats Grid */}
+        {/* ✅ Stats Grid (Dynamic from Backend) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title="Total Properties"
-            value={24}
+            value={stats.total_properties}
             icon={Building2}
-            trend={{ value: "2 new this month", positive: true }}
+            trend={{ value: "Updated live", positive: true }}
           />
           <StatCard
             title="Total Tenants"
-            value={156}
+            value={stats.total_tenants}
             icon={Users}
-            trend={{ value: "5 new this month", positive: true }}
+            trend={{
+              value: `${stats.new_tenants_this_month} new this month`,
+              positive: true,
+            }}
           />
           <StatCard
             title="Overall Occupancy"
-            value="92%"
+            value={stats.occupancy_rate}
             icon={TrendingUp}
-            trend={{ value: "3% from last month", positive: true }}
+            trend={{ value: "From backend data", positive: true }}
           />
           <StatCard
             title="Maintenance Requests"
-            value={12}
+            value={stats.maintenance_requests}
             icon={Wrench}
-            trend={{ value: "4 new this week", positive: false }}
+            trend={{ value: "Pending / In Progress", positive: false }}
           />
         </div>
 
-        {/* Charts and Tables */}
+        {/* Other Components (can be connected later) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <RentCollectionChart />
           <UpcomingLeases />
         </div>
 
-        {/* Quick Picks */}
         <QuickPicks />
-
-        {/* Recent Tenants */}
         <RecentTenants />
       </div>
     </>
   );
-};
-
-export default AdminDashboard;
+}

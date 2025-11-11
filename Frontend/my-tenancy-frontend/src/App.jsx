@@ -19,104 +19,179 @@ import PropertyDetailPage from "./pages/PropertyDetailPage";
 import TenantReports from "./pages/TenantReports";
 import AdminPayments from "./pages/AdminPayments";
 import TenantProfile from "./pages/TenantProfile";
+import PaymentCash from "./pages/PaymentCash";
+import PaymentOnline from "./pages/PaymentOnline";
+import PaymentBank from "./pages/PaymentBank";
+
 function App() {
   return (
-    
-
-
     <Routes>
-      {/* Public Routes */}
+      {/* Public */}
       <Route path="/" element={<LoginPage />} />
 
       {/* Admin Routes */}
-      <Route path="/admin" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminDashboard />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/properties" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminProperties />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/properties/:id" element={
-        <ProtectedRoute allowedRole="admin">
-          <PropertyDetailPage />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/properties/add" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminRegisterProperty />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/tenants" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminTenants />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/tenants/add" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminRegisterTenant />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/payments" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminPayments />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/notifications" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminNotifications />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/notifications/add" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminRegisterNotifications />
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/reports" element={
-        <ProtectedRoute allowedRole="admin">
-          <AdminReports />
-        </ProtectedRoute>
-      } />
+      <Route
+        path="/admin"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/properties"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminProperties />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/properties/:id"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <PropertyDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/properties/add"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminRegisterProperty />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/tenants"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminTenants />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/tenants/add"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminRegisterTenant />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/payments"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminPayments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/notifications"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminNotifications />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/notifications/add"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminRegisterNotifications />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/reports"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminReports />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Tenant Routes */}
-      <Route path="/tenant" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantDashboard />
-        </ProtectedRoute>
-      } />
-      <Route path="/tenant/property-info" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantPropertyInfo />
-        </ProtectedRoute>
-      } />
-      <Route path="/tenant/profile" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantProfile />
-        </ProtectedRoute>
-      } />
-      <Route path="/tenant/payments" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantPayments />
-        </ProtectedRoute>
-      } />
-      <Route path="/tenant/notifications" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantNotifications />
-        </ProtectedRoute>
-      } />
-      <Route path="/tenant/reports" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantReports />
-        </ProtectedRoute>
-      } />
-      <Route path="/tenant/reports/add" element={
-        <ProtectedRoute allowedRole="tenant">
-          <TenantRegisterReports />
-        </ProtectedRoute>
-      } />
-
+      <Route
+        path="/tenant"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantDashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/property-info"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantPropertyInfo />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/profile"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantProfile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/payments"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantPayments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/payments/cash"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <PaymentCash />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/payments/online"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <PaymentOnline />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/payments/bank"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <PaymentBank />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/notifications"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantNotifications />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/reports"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantReports />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/tenant/reports/add"
+        element={
+          <ProtectedRoute allowedRole="tenant">
+            <TenantRegisterReports />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }

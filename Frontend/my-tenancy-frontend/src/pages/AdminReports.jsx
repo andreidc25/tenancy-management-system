@@ -1,16 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import API from "../api/axios"; // ✅ use axios instance for consistency
 
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/reports/all/")
-      .then((res) => res.json())
-      .then((data) => setReports(data.reports))
-      .catch((err) => console.error("Error fetching reports:", err));
+    const fetchReports = async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        // ✅ Updated endpoint — now correctly under /api/
+        const res = await API.get("reports/all/");
+        setReports(res.data.reports || []);
+      } catch (err) {
+        console.error("Error fetching reports:", err);
+        setError("Failed to fetch reports. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
   }, []);
 
   return (
@@ -23,52 +39,61 @@ const ReportsPage = () => {
 
       <main className="p-8">
         <div className="bg-white shadow-lg rounded-2xl p-6">
-          <table className="min-w-full border-collapse w-full">
-            <thead>
-              <tr className="text-left bg-gray-100">
-                <th className="py-3 px-4 rounded-tl-lg">Title</th>
-                <th className="py-3 px-4">Tenant</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 rounded-tr-lg">Created At</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reports.length > 0 ? (
-                reports.map((report) => (
-                  <tr
-                    key={report.id}
-                    className="border-t hover:bg-gray-50 cursor-pointer"
-                  >
-                    <td className="py-3 px-4 text-blue-600 font-medium hover:underline">
-                      {report.title}
-                    </td>
-                    <td className="py-3 px-4">{report.tenant}</td>
-                    <td
-                      className={`py-3 px-4 font-semibold ${
-                        report.status === "Resolved"
-                          ? "text-green-500"
-                          : report.status === "In Progress"
-                          ? "text-yellow-500"
-                          : "text-gray-500"
-                      }`}
-                    >
-                      {report.status}
-                    </td>
-                    <td className="py-3 px-4">{report.created_at}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan="4"
-                    className="py-6 text-center text-gray-400 italic"
-                  >
-                    No reports found
-                  </td>
+          {loading ? (
+            <p className="text-center text-gray-500 py-6">Loading reports...</p>
+          ) : error ? (
+            <p className="text-center text-red-500 py-6">{error}</p>
+          ) : (
+            <table className="min-w-full border-collapse w-full">
+              <thead>
+                <tr className="text-left bg-gray-100">
+                  <th className="py-3 px-4 rounded-tl-lg">Title</th>
+                  <th className="py-3 px-4">Tenant</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 rounded-tr-lg">Created At</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {reports.length > 0 ? (
+                  reports.map((report) => (
+                    <tr
+                      key={report.id}
+                      className="border-t hover:bg-gray-50 cursor-pointer"
+                      onClick={() =>
+                        navigate(`/admin/reports/${report.id}`)
+                      } // optional: navigate to report details
+                    >
+                      <td className="py-3 px-4 text-blue-600 font-medium hover:underline">
+                        {report.title}
+                      </td>
+                      <td className="py-3 px-4">{report.tenant}</td>
+                      <td
+                        className={`py-3 px-4 font-semibold ${
+                          report.status === "Resolved"
+                            ? "text-green-500"
+                            : report.status === "In Progress"
+                            ? "text-yellow-500"
+                            : "text-gray-500"
+                        }`}
+                      >
+                        {report.status}
+                      </td>
+                      <td className="py-3 px-4">{report.created_at}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="py-6 text-center text-gray-400 italic"
+                    >
+                      No reports found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
     </div>

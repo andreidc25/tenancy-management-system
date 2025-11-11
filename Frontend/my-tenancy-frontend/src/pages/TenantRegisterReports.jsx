@@ -1,14 +1,22 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
+import BackButton from "../components/BackButton";
+import API from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterReportPage = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
-    tenant: "",
     title: "",
     message: "",
     image: null,
-    status: "Submitted",
+    status: "SUBMITTED", // match backend enum
   });
+
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -18,55 +26,50 @@ const RegisterReportPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setSuccess("");
+    setError("");
 
-    // Prepare form data for Django API (multipart/form-data)
-    const data = new FormData();
-    data.append("tenant", formData.tenant);
-    data.append("title", formData.title);
-    data.append("message", formData.message);
-    data.append("status", formData.status);
-    if (formData.image) data.append("image", formData.image);
+    try {
+      const data = new FormData();
+      data.append("title", formData.title);
+      data.append("message", formData.message);
+      data.append("status", formData.status);
+      if (formData.image) data.append("image", formData.image);
 
-    console.log("Report Submitted:", formData);
-    // Later: POST this to your Django backend (e.g., /api/reports/)
-    // fetch("http://localhost:8000/api/reports/", { method: "POST", body: data });
+      const res = await API.post("reports/tenant/add/", data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Report created:", res.data);
+      setSuccess("Report submitted successfully!");
+      setTimeout(() => navigate("/tenant/reports"), 1500); // redirect after success
+    } catch (err) {
+      console.error("Error submitting report:", err);
+      setError("Failed to submit report. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
       <Navbar />
 
-      {/* Page Header */}
-      <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Add Report</h2>
-      </header>
+      <div className="container mx-auto px-4 py-8">
+        <BackButton />
 
-      {/* Form */}
-      <main className="p-8">
+        <h2 className="text-2xl font-semibold mb-6">Add Report</h2>
+
         <form
           onSubmit={handleSubmit}
           className="bg-white shadow-lg rounded-2xl p-8 max-w-3xl mx-auto space-y-6"
           encType="multipart/form-data"
         >
-          {/* Tenant */}
-          <div>
-            <label className="block font-medium mb-2">Tenant:</label>
-            <select
-              name="tenant"
-              value={formData.tenant}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-              required
-            >
-              <option value="">-- Select Tenant --</option>
-              <option value="bonbon.acm">bonbon.acm</option>
-              <option value="juan.delacruz">juan.delacruz</option>
-              <option value="maria.santos">maria.santos</option>
-            </select>
-          </div>
-
           {/* Title */}
           <div>
             <label className="block font-medium mb-2">Title:</label>
@@ -110,38 +113,28 @@ const RegisterReportPage = () => {
             </p>
           </div>
 
-          {/* Status */}
-          <div>
-            <label className="block font-medium mb-2">Status:</label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring focus:ring-blue-200 focus:outline-none"
-            >
-              <option value="Submitted">Submitted</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
-            </select>
-          </div>
-
           {/* Buttons */}
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
+              onClick={() => navigate("/tenant/reports")}
               className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-5 py-2 rounded-xl transition"
             >
               Cancel
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-6 py-2 rounded-xl shadow hover:opacity-90 transition"
             >
-              Save Report
+              {loading ? "Submitting..." : "Save Report"}
             </button>
           </div>
+
+          {success && <p className="text-green-600 text-center">{success}</p>}
+          {error && <p className="text-red-600 text-center">{error}</p>}
         </form>
-      </main>
+      </div>
     </div>
   );
 };
