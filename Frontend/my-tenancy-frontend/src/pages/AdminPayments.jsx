@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
-import API from "../api/axios"; // Use your configured Axios instance
+import { useNavigate } from "react-router-dom"; // ✅ Add this
+import API from "../api/axios";
 
 const AdminPaymentsPage = () => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [acknowledging, setAcknowledging] = useState(null);
+  const navigate = useNavigate(); // ✅ Initialize navigate
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -67,8 +69,14 @@ const AdminPaymentsPage = () => {
                 </tr>
               ) : payments.length > 0 ? (
                 payments.map((payment) => (
-                  <tr key={payment.id} className="border-t hover:bg-gray-50">
-                    <td className="py-3 px-4 font-medium">{payment.tenant_name}</td>
+                  <tr
+                    key={payment.id}
+                    className="border-t hover:bg-gray-50 cursor-pointer"
+                    onClick={() => navigate(`/admin/payments/${payment.id}`)} // ✅ New
+                  >
+                    <td className="py-3 px-4 font-medium">
+                      {payment.tenant_name}
+                    </td>
                     <td className="py-3 px-4">₱{payment.amount}</td>
                     <td className="py-3 px-4">
                       {payment.payment_method === "BANK"
@@ -92,7 +100,10 @@ const AdminPaymentsPage = () => {
                     <td className="py-3 px-4">
                       {payment.status !== "COMPLETED" && (
                         <button
-                          onClick={() => handleAcknowledge(payment.id)}
+                          onClick={(e) => {
+                            e.stopPropagation(); // ✅ prevent click from triggering navigation
+                            handleAcknowledge(payment.id);
+                          }}
                           className="bg-gradient-to-r from-blue-500 to-indigo-400 text-white px-4 py-2 rounded-xl shadow hover:opacity-90 transition"
                           disabled={acknowledging === payment.id}
                         >

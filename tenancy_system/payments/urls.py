@@ -1,13 +1,24 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
-from .views import PaymentViewSet, tenant_balance, tenant_payment_history
+from .views import (
+    PaymentViewSet,
+    tenant_balance,
+    tenant_payment_history,
+    get_payment_detail,
+    update_payment_status
+)
 
 router = DefaultRouter()
 router.register(r'', PaymentViewSet, basename='payments')
 
 urlpatterns = [
-    path('tenant/history/', tenant_payment_history, name='tenant_payment_history'),  # ✅ matches frontend
+    # ✅ Tenant endpoints
+    path('tenant/history/', tenant_payment_history, name='tenant_payment_history'),
     path('tenant/<int:tenant_id>/balance/', tenant_balance, name='tenant_balance'),
+
+    # ✅ Admin endpoints
+    path('<int:pk>/', get_payment_detail, name='get_payment_detail'),
+    path('<int:pk>/update-status/', update_payment_status, name='update_payment_status'),
 ]
 
 urlpatterns += router.urls

@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.db.models import Sum
 from datetime import date
-
 from .models import Payment                # ✅ use local import
 from tenants.models import TenantProfile   # ✅ correct model import
 from .serializers import PaymentSerializer
@@ -105,3 +104,42 @@ def tenant_payment_history(request):
         for p in payments
     ]
     return Response(data)
+@api_view(['GET'])
+@permission_classes([IsAdminUser])
+def get_payment_detail(request, pk):
+    """Admin view for a single payment with proof"""
+    try:
+        payment = Payment.objects.select_related('tenant__user').get(pk=pk)
+    except Payment.DoesNotExist:
+        return Response({"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    data = {
+        "id": payment.id,
+        "tenant": payment.tenant.user.username,
+        "property": str(payment.tenant.property) if payment.tenant.property else "N/A",
+        "amount": float(payment.amount),
+        "status": payment.status,
+        "payment_method": payment.payment_method,
+        "payment_date": payment.payment_date.strftime("%b %d, %Y %I:%M %p"),
+        "proof": request.build_absolute_uri(payment.proof.url) if payment.proof else None,
+        "notes": payment.notes or "",
+    }
+    return Response(data)
+
+
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser])
+def update_payment_status(request, pk):
+    """Admin can update payment status"""
+    try:
+        payment = Payment.objects.get(pk=pk)
+    except Payment.DoesNotExist:
+        return Response({"error": "Payment not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    new_status = request.data.get("status")
+    if new_status not in ["PENDING", "COMPLETED", "FAILED"]:
+        return Response({"error": "Invalid status value"}, status=status.HTTP_400_BAD_REQUEST)
+
+    payment.status = new_status
+    payment.save()
+    return Response({"success": True, "message": "Payment status updated", "status": payment.status})

@@ -17,6 +17,7 @@ import AdminRegisterNotifications from "./pages/AdminRegisterNotifications";
 import AdminPayments from "./pages/AdminPayments";
 import PropertyDetailPage from "./pages/PropertyDetailPage";
 import AdminReportDetail from "./pages/AdminReportDetail";
+import AdminPaymentDetail from "./pages/AdminPaymentDetail";
 
 // 👤 Tenant Pages
 import TenantDashboard from "./pages/TenantDashboard";
@@ -95,6 +96,14 @@ function App() {
         element={
           <ProtectedRoute allowedRole="admin">
             <AdminPayments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/payments/:id"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminPaymentDetail />
           </ProtectedRoute>
         }
       />
