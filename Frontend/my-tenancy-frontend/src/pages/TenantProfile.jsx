@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import API from "../api/axios";
 
+
 const TenantProfile = () => {
   const navigate = useNavigate();
   const [tenant, setTenant] = useState(null);
@@ -259,7 +260,9 @@ const TenantProfile = () => {
                   </p>
                 </div>
               </div>
-              <Button className="w-full mt-4 bg-cyan-500 hover:bg-cyan-600">
+              <Button
+               onClick={() => navigate("/tenant/payments")}
+               className="w-full mt-4 bg-cyan-500 hover:bg-cyan-600">
                 View Payment History
               </Button>
               <Button variant="outline" className="w-full">
