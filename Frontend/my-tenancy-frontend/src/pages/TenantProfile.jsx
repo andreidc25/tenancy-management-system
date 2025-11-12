@@ -56,23 +56,18 @@ const TenantProfile = () => {
   // ✅ Handle Save button
   const handleSave = async () => {
     try {
-      // 🟢 1️⃣ Update profile info first
+      // 🟢 Update profile info first
       const profileRes = await API.patch("tenants/profile/", {
         full_name: editData.full_name,
         phone_number: editData.phone_number,
         email: editData.email,
       });
 
-      // Update local state with returned data (so full name refreshes immediately)
-      if (profileRes.data?.data) {
-        setTenant(profileRes.data.data);
-        setEditData(profileRes.data.data);
-      } else {
-        setTenant(profileRes.data);
-        setEditData(profileRes.data);
-      }
+      const updated = profileRes.data?.data ?? profileRes.data;
+      setTenant(updated);
+      setEditData(updated);
 
-      // 🟡 2️⃣ Handle password change (if fields are filled)
+      // 🟡 Handle password change
       if (
         editData.current_password?.trim() &&
         editData.new_password?.trim() &&
@@ -83,10 +78,7 @@ const TenantProfile = () => {
           new_password: editData.new_password,
           confirm_password: editData.confirm_password,
         });
-
-        if (passRes.data.message) {
-          alert("Password changed successfully!");
-        }
+        if (passRes.data.message) alert("Password changed successfully!");
       }
 
       alert("Profile updated successfully!");
@@ -94,11 +86,7 @@ const TenantProfile = () => {
       setShowPasswordFields(false);
     } catch (err) {
       console.error("Failed to update tenant:", err.response?.data || err);
-      if (err.response?.data?.error) {
-        alert(err.response.data.error);
-      } else {
-        alert("Error updating profile.");
-      }
+      alert(err.response?.data?.error || "Error updating profile.");
     }
   };
 
@@ -153,8 +141,9 @@ const TenantProfile = () => {
           />
         </div>
 
+        {/* Grid of Detail Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* 🧍 Personal Info Card */}
+          {/* 🧍 Personal Info */}
           <Card
             className="cursor-pointer hover:shadow-lg transition"
             onClick={() => !isEditing && setIsEditing(true)}
@@ -171,47 +160,35 @@ const TenantProfile = () => {
               {isEditing ? (
                 <>
                   <div className="grid grid-cols-1 gap-4">
-                    {/* Full Name */}
                     <div>
                       <label className="text-sm text-gray-600">Full Name</label>
                       <input
                         type="text"
                         value={editData.full_name || ""}
-                        onChange={(e) =>
-                          setEditData({ ...editData, full_name: e.target.value })
-                        }
+                        onChange={(e) => setEditData({ ...editData, full_name: e.target.value })}
                         className="w-full border rounded-md p-2 mt-1"
                       />
                     </div>
-
-                    {/* Phone */}
                     <div>
                       <label className="text-sm text-gray-600">Phone Number</label>
                       <input
                         type="text"
                         value={editData.phone_number || ""}
-                        onChange={(e) =>
-                          setEditData({ ...editData, phone_number: e.target.value })
-                        }
+                        onChange={(e) => setEditData({ ...editData, phone_number: e.target.value })}
                         className="w-full border rounded-md p-2 mt-1"
                       />
                     </div>
-
-                    {/* Email */}
                     <div>
                       <label className="text-sm text-gray-600">Email</label>
                       <input
                         type="email"
                         value={editData.email || ""}
-                        onChange={(e) =>
-                          setEditData({ ...editData, email: e.target.value })
-                        }
+                        onChange={(e) => setEditData({ ...editData, email: e.target.value })}
                         className="w-full border rounded-md p-2 mt-1"
                       />
                     </div>
                   </div>
 
-                  {/* 🔒 Password Section */}
                   <Button
                     variant="outline"
                     onClick={() => setShowPasswordFields(!showPasswordFields)}
@@ -259,7 +236,6 @@ const TenantProfile = () => {
                     </div>
                   )}
 
-                  {/* Buttons */}
                   <div className="flex justify-end gap-3 mt-6">
                     <Button
                       variant="outline"
@@ -271,10 +247,7 @@ const TenantProfile = () => {
                     >
                       <X className="w-4 h-4" /> Cancel
                     </Button>
-                    <Button
-                      onClick={handleSave}
-                      className="bg-green-600 hover:bg-green-700 gap-2"
-                    >
+                    <Button onClick={handleSave} className="bg-green-600 hover:bg-green-700 gap-2">
                       <Save className="w-4 h-4" /> Save
                     </Button>
                   </div>
@@ -307,7 +280,7 @@ const TenantProfile = () => {
             </CardContent>
           </Card>
 
-          {/* Property + Lease Details */}
+          {/* 🏠 Property Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -332,6 +305,62 @@ const TenantProfile = () => {
                   </Badge>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* 📄 Lease Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5" />
+                Lease Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-3">
+                <Calendar className="w-5 h-5 text-gray-500 mt-1" />
+                <div>
+                  <p className="text-sm text-gray-500">Lease Start Date</p>
+                  <p className="font-semibold">{tenant.lease_start_date || "N/A"}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Calendar className="w-5 h-5 text-gray-500 mt-1" />
+                <div>
+                  <p className="text-sm text-gray-500">Lease End Date</p>
+                  <p className="font-semibold">{tenant.lease_end_date || "N/A"}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 💰 Payment Status */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5" />
+                Payment Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-gray-500 mt-1" />
+                <div>
+                  <p className="text-sm text-gray-500">Current Status</p>
+                  <Badge variant="default" className="mt-1 bg-green-500">
+                    Paid
+                  </Badge>
+                </div>
+              </div>
+              <Button
+                onClick={() => navigate("/tenant/payments")}
+                className="w-full mt-4 bg-cyan-500 hover:bg-cyan-600"
+              >
+                View Payment History
+              </Button>
+              <Button variant="outline" className="w-full">
+                Download Lease Agreement
+              </Button>
             </CardContent>
           </Card>
         </div>
