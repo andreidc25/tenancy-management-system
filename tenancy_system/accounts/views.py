@@ -14,7 +14,14 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.http import JsonResponse
-
+from rest_framework import viewsets
+from django.contrib.auth.models import User
+from rest_framework.permissions import IsAdminUser
+from rest_framework.serializers import ModelSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['GET'])
@@ -202,3 +209,25 @@ def tenant_dashboard(request):
     
     return render(request, 'accounts/tenant_dashboard.html', context)
 
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def whoami(request):
+    return Response({
+        "user_id": request.user.id,
+        "username": request.user.username,
+        "is_staff": request.user.is_staff,
+        "is_authenticated": request.user.is_authenticated,
+    })

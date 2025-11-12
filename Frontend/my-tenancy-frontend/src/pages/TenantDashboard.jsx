@@ -1,55 +1,104 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Home, User, CreditCard, Bell, FileText, LogOut } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Wallet, Calendar, AlertCircle, TrendingUp } from "lucide-react";
+import { ClientStatCard } from "../components/StatCard";
+import { QuickPicks } from "../components/QuickPicks";
+import PropertyOverview from "../components/PropertyOverview";
+import PaymentHistory from "../components/PaymentHistory";
+import Navbar from "../components/Navbar";
+import API from "../api/axios";
 
-export default function TenantDashboard() {
-  const navigate = useNavigate();
+const TenantDashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const cards = [
-    { title: "Property Info", icon: <Home size={40} />, color: "from-indigo-500 to-indigo-600", route: "/tenant/property-info" },
-    { title: "Profile", icon: <User size={40} />, color: "from-emerald-500 to-emerald-600", route: "/tenant/profile" },
-    { title: "Payments", icon: <CreditCard size={40} />, color: "from-amber-500 to-amber-600", route: "/tenant/payments" },
-    { title: "Notifications", icon: <Bell size={40} />, color: "from-sky-500 to-sky-600", route: "/tenant/notifications" },
-    { title: "Reports", icon: <FileText size={40} />, color: "from-rose-500 to-rose-600", route: "/tenant/reports" },
-  ];
+  useEffect(() => {
+    API.get("dashboard/tenant-summary/")
+      .then((res) => setStats(res.data))
+      .catch((err) => console.error("Error fetching tenant summary:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const handleLogout = () => {
-    navigate("/"); // Redirect back to login page
-  };
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-8 text-lg text-gray-500">Loading your dashboard...</div>
+      </>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-8 text-red-500 text-lg">
+          Unable to load tenant information.
+        </div>
+      </>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-gray-900 text-white flex justify-between items-center px-8 py-4 shadow-md">
-        <h1 className="text-xl font-semibold tracking-wide">Dashboard</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-200">Welcome, Client</span>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition"
-          >
-            <LogOut size={16} /> Logout
-          </button>
+    <>
+      <Navbar />
+      <div className="p-8 space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Tenant Dashboard</h1>
+          <p className="text-muted-foreground mt-1">
+            Welcome back, {stats.tenant_name}! Here’s an overview of your rental information.
+          </p>
         </div>
-      </header>
 
-      {/* Dashboard Cards */}
-      <main className="flex-grow flex flex-col items-center justify-center px-6 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              onClick={() => navigate(card.route)}
-              className={`group bg-gradient-to-br ${card.color} text-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 p-8 cursor-pointer flex flex-col items-center justify-center`}
-            >
-              <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
-                {card.icon}
-              </div>
-              <h2 className="text-lg font-semibold tracking-wide">{card.title}</h2>
-            </div>
-          ))}
+        {/* ✅ Stats Grid (Dynamic) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <ClientStatCard
+            title="Next Rent Due"
+            value={stats.next_rent_due}
+            icon={Wallet}
+            trend={`Due ${
+              stats.next_due_date
+                ? new Date(stats.next_due_date).toLocaleDateString()
+                : "soon"
+            }`}
+            status="warning"
+          />
+          <ClientStatCard
+            title="Lease Ends In"
+            value={`${stats.lease_months_left || 0} Months`}
+            icon={Calendar}
+            trend={`Ends ${
+              stats.lease_end_date
+                ? new Date(stats.lease_end_date).toLocaleDateString()
+                : "unknown"
+            }`}
+            status="info"
+          />
+          <ClientStatCard
+            title="Maintenance Requests"
+            value={stats.total_reports} // ✅ corrected
+            icon={AlertCircle}
+            trend={`${stats.pending_reports} pending`}
+            status="warning"
+          />
+          <ClientStatCard
+            title="Payment Status"
+            value={stats.payment_status}
+            icon={TrendingUp}
+            trend="Latest records"
+            status={stats.payment_status === "Up to Date" ? "success" : "warning"}
+          />
         </div>
-      </main>
-    </div>
+
+        {/* Overview and History */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <PropertyOverview />
+          <PaymentHistory />
+        </div>
+
+        <QuickPicks />
+      </div>
+    </>
   );
-}
+};
+
+export default TenantDashboard;

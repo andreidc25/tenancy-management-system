@@ -25,8 +25,8 @@ function LoginPage() {
       console.log("Login response:", data);
 
       // Save tokens + user info
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
       localStorage.setItem("is_staff", data.is_staff);
       localStorage.setItem("username", data.username);
 

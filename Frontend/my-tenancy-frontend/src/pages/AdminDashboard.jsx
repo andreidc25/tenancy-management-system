@@ -1,55 +1,101 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Home, Users, CreditCard, Bell, FileText, LogOut } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Building2, Users, TrendingUp, Wrench } from "lucide-react";
+import Navbar from "../components/Navbar";
+import { StatCard } from "../components/StatCard";
+import { RentCollectionChart } from "../components/RentCollectionChart";
+import { UpcomingLeases } from "../components/UpcomingLeases";
+import { QuickPicks } from "../components/QuickPicks";
+import { RecentTenants } from "../components/RecentTenants";
+import API from "../api/axios";
 
 export default function AdminDashboard() {
-  const navigate = useNavigate();
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const cards = [
-    { title: "Properties", icon: <Home size={40} />, color: "from-indigo-500 to-indigo-600", route: "/admin/properties" },
-    { title: "Tenants", icon: <Users size={40} />, color: "from-emerald-500 to-emerald-600", route: "/admin/tenants" },
-    { title: "Payments", icon: <CreditCard size={40} />, color: "from-amber-500 to-amber-600", route: "/admin/payments" },
-    { title: "Notifications", icon: <Bell size={40} />, color: "from-sky-500 to-sky-600", route: "/admin/notifications" },
-    { title: "Reports", icon: <FileText size={40} />, color: "from-rose-500 to-rose-600", route: "/admin/reports" },
-  ];
+  useEffect(() => {
+    API.get("dashboard/admin-dashboard-stats/")
+      .then((res) => {
+        setStats(res.data);
+      })
+      .catch((err) => {
+        console.error("Error fetching dashboard data:", err);
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
-  const handleLogout = () => {
-    navigate("/"); // Redirect back to login page
-  };
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-8 text-lg">Loading admin dashboard...</div>
+      </>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <>
+        <Navbar />
+        <div className="p-8 text-lg text-red-500">
+          Failed to load dashboard data.
+        </div>
+      </>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-gray-900 text-white flex justify-between items-center px-8 py-4 shadow-md">
-        <h1 className="text-xl font-semibold tracking-wide">Dashboard</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-200">Welcome, Admin</span>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-medium transition"
-          >
-            <LogOut size={16} /> Logout
-          </button>
+    <>
+      <Navbar />
+      <div className="p-8 space-y-8">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">
+            Admin Dashboard
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Welcome back! Here's an overview of all properties and tenants.
+          </p>
         </div>
-      </header>
 
-      {/* Dashboard Cards */}
-      <main className="flex-grow flex flex-col items-center justify-center px-6 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-5xl">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              onClick={() => navigate(card.route)}
-              className={`group bg-gradient-to-br ${card.color} text-white rounded-2xl shadow-lg transform hover:-translate-y-2 hover:shadow-2xl transition-all duration-300 p-8 cursor-pointer flex flex-col items-center justify-center`}
-            >
-              <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
-                {card.icon}
-              </div>
-              <h2 className="text-lg font-semibold tracking-wide">{card.title}</h2>
-            </div>
-          ))}
+        {/* ✅ Stats Grid (Dynamic from Backend) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatCard
+            title="Total Properties"
+            value={stats.total_properties}
+            icon={Building2}
+            trend={{ value: "Updated live", positive: true }}
+          />
+          <StatCard
+            title="Total Tenants"
+            value={stats.total_tenants}
+            icon={Users}
+            trend={{
+              value: `${stats.new_tenants_this_month} new this month`,
+              positive: true,
+            }}
+          />
+          <StatCard
+            title="Overall Occupancy"
+            value={stats.occupancy_rate}
+            icon={TrendingUp}
+            trend={{ value: "From backend data", positive: true }}
+          />
+          <StatCard
+            title="Maintenance Requests"
+            value={stats.maintenance_requests}
+            icon={Wrench}
+            trend={{ value: "Pending / In Progress", positive: false }}
+          />
         </div>
-      </main>
-    </div>
+
+        {/* Other Components (can be connected later) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RentCollectionChart />
+          <UpcomingLeases />
+        </div>
+
+        <QuickPicks />
+        <RecentTenants />
+      </div>
+    </>
   );
 }
