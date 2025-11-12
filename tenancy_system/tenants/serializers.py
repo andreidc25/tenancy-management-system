@@ -3,9 +3,9 @@ from .models import TenantProfile
 
 class TenantProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
-    email = serializers.EmailField(source='user.email', read_only=True)
-    full_name = serializers.SerializerMethodField()
-    property = serializers.SerializerMethodField()  # 👈 override property field
+    email = serializers.EmailField(source='user.email', required=False)
+    full_name = serializers.CharField(source='user.first_name', required=False)
+    property = serializers.SerializerMethodField()
 
     class Meta:
         model = TenantProfile
@@ -14,11 +14,22 @@ class TenantProfileSerializer(serializers.ModelSerializer):
             'property', 'lease_start_date', 'lease_end_date',
             'monthly_rent', 'security_deposit', 'is_active'
         ]
+        read_only_fields = ['username', 'property']
 
-    def get_full_name(self, obj):
-        return obj.user.get_full_name() or obj.user.username
+    def update(self, instance, validated_data):
+        """Update both User and TenantProfile fields"""
+        user_data = validated_data.pop('user', {})
+        user = instance.user
 
-    def get_property(self, obj):  # 👈 safely handle null property
-        if obj.property:
-            return str(obj.property)  # calls Property.__str__() — e.g., "Sunset Villa - Unit A1"
-        return None
+        # ✅ Update name and email
+        if 'first_name' in user_data:
+            user.first_name = user_data['first_name']
+        if 'email' in user_data:
+            user.email = user_data['email']
+        user.save()
+
+        # ✅ Update tenant-specific fields
+        return super().update(instance, validated_data)
+
+    def get_property(self, obj):
+        return str(obj.property) if obj.property else None
