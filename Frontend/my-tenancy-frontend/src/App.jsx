@@ -9,6 +9,7 @@ import LoginPage from "./pages/LoginPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminProperties from "./pages/AdminProperties";
 import AdminTenants from "./pages/AdminTenants";
+import TenantProfilePage from "./pages/TenantProfilePage";
 import AdminNotifications from "./pages/AdminNotifications";
 import AdminReports from "./pages/AdminReports";
 import AdminRegisterTenant from "./pages/AdminRegisterTenant";
@@ -38,7 +39,7 @@ function App() {
       {/* 🏠 Public Route */}
       <Route path="/" element={<LoginPage />} />
 
-      {/* 🧭 Redirect base admin/tenant paths to their dashboards */}
+      {/* 🧭 Redirect base admin/tenant paths to dashboards */}
       <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
       <Route path="/tenant" element={<Navigate to="/tenant/dashboard" replace />} />
 
@@ -80,6 +81,14 @@ function App() {
         element={
           <ProtectedRoute allowedRole="admin">
             <AdminTenants />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/tenants/:id"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <TenantProfilePage />
           </ProtectedRoute>
         }
       />
@@ -132,12 +141,12 @@ function App() {
         }
       />
       <Route
-          path="/admin/reports/:id"
-          element={
-            <ProtectedRoute allowedRole="admin">
-              <AdminReportDetail />
-            </ProtectedRoute>
-          }
+        path="/admin/reports/:id"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminReportDetail />
+          </ProtectedRoute>
+        }
       />
 
       {/* 👤 TENANT ROUTES */}
@@ -230,7 +239,7 @@ function App() {
         }
       />
 
-      {/* 🧩 Catch-all route */}
+      {/* 🧩 Catch-all Route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

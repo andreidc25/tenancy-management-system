@@ -53,7 +53,11 @@ const TenantsPage = () => {
             <tbody>
               {tenants.length > 0 ? (
                 tenants.map((tenant) => (
-                  <tr key={tenant.id} className="border-t hover:bg-gray-50">
+                  <tr
+                    key={tenant.id}
+                    onClick={() => navigate(`/admin/tenants/${tenant.id}`)}
+                    className="border-t hover:bg-gray-50 cursor-pointer transition"
+                  >
                     <td className="py-3 px-4 font-medium">{tenant.full_name}</td>
                     <td className="py-3 px-4 text-gray-600">{tenant.username}</td>
                     <td className="py-3 px-4">{tenant.email}</td>
@@ -63,7 +67,11 @@ const TenantsPage = () => {
                     <td className="py-3 px-4">₱{tenant.monthly_rent}</td>
                     <td className="py-3 px-4">₱{tenant.security_deposit}</td>
                     <td className="py-3 px-4">{tenant.lease_end_date}</td>
-                    <td className="py-3 px-4 text-green-500 font-semibold">
+                    <td
+                      className={`py-3 px-4 font-semibold ${
+                        tenant.is_active ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
                       {tenant.is_active ? "Active" : "Inactive"}
                     </td>
                   </tr>
