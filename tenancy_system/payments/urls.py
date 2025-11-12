@@ -17,8 +17,8 @@ urlpatterns = [
     path('tenant/<int:tenant_id>/balance/', tenant_balance, name='tenant_balance'),
 
     # ✅ Admin endpoints
-    path('<int:pk>/', get_payment_detail, name='get_payment_detail'),
-    path('<int:pk>/update-status/', update_payment_status, name='update_payment_status'),
+    path('admin/<int:pk>/', get_payment_detail),
+path('admin/<int:pk>/update-status/', update_payment_status),
 ]
 
 urlpatterns += router.urls
