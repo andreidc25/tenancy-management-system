@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import TenantInfoCard from "../components/TenantInfoCard";
@@ -15,7 +16,6 @@ import {
   CreditCard,
   FileText,
   User,
-  ArrowLeft,
   CheckCircle,
   Edit3,
   Save,
@@ -51,7 +51,6 @@ const TenantProfile = () => {
   }, [navigate]);
 
   const handleLogout = () => navigate("/");
-  const handleBack = () => navigate(-1);
 
   // ✅ Handle Save button
   const handleSave = async () => {
@@ -115,39 +114,58 @@ const TenantProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar title="Tenant Profile" userName={tenant.full_name || tenant.username} onLogout={handleLogout} />
 
       <main className="container mx-auto px-6 py-8">
-        <Button variant="outline" onClick={handleBack} className="mb-6 gap-2">
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </Button>
-
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Tenant Profile</h1>
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <TenantInfoCard title="Property" value={tenant.property || "N/A"} icon={Home} color="blue" />
-          <TenantInfoCard
-            title="Monthly Rent"
-            value={`₱${tenant.monthly_rent?.toLocaleString() ?? 0}`}
-            icon={DollarSign}
-            color="green"
-          />
-          <TenantInfoCard
-            title="Security Deposit"
-            value={`₱${tenant.security_deposit?.toLocaleString() ?? 0}`}
-            icon={CreditCard}
-            color="orange"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TenantInfoCard title="Property" value={tenant.property || "N/A"} icon={Home} color="blue" />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TenantInfoCard
+              title="Monthly Rent"
+              value={`₱${tenant.monthly_rent?.toLocaleString() ?? 0}`}
+              icon={DollarSign}
+              color="green"
+            />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TenantInfoCard
+              title="Security Deposit"
+              value={`₱${tenant.security_deposit?.toLocaleString() ?? 0}`}
+              icon={CreditCard}
+              color="orange"
+            />
+          </motion.div>
         </div>
 
         {/* Grid of Detail Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* 🧍 Personal Info */}
-          <Card
-            className="cursor-pointer hover:shadow-lg transition"
-            onClick={() => !isEditing && setIsEditing(true)}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
+            <Card
+              className="cursor-pointer hover:shadow-lg transition"
+              onClick={() => !isEditing && setIsEditing(true)}
+            >
             <CardHeader className="flex justify-between items-center">
               <CardTitle className="flex items-center gap-2">
                 <User className="w-5 h-5" />
@@ -279,9 +297,15 @@ const TenantProfile = () => {
               )}
             </CardContent>
           </Card>
+          </motion.div>
 
           {/* 🏠 Property Details */}
-          <Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Home className="w-5 h-5" />
@@ -307,9 +331,15 @@ const TenantProfile = () => {
               </div>
             </CardContent>
           </Card>
+          </motion.div>
 
           {/* 📄 Lease Information */}
-          <Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <FileText className="w-5 h-5" />
@@ -333,9 +363,15 @@ const TenantProfile = () => {
               </div>
             </CardContent>
           </Card>
+          </motion.div>
 
           {/* 💰 Payment Status */}
-          <Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5" />
@@ -363,6 +399,7 @@ const TenantProfile = () => {
               </Button>
             </CardContent>
           </Card>
+          </motion.div>
         </div>
       </main>
     </div>

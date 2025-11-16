@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Building2, Users, TrendingUp, Wrench } from "lucide-react";
 import Navbar from "../components/Navbar";
 import { StatCard } from "../components/StatCard";
 import { RentCollectionChart } from "../components/RentCollectionChart";
 import { UpcomingLeases } from "../components/UpcomingLeases";
-import { QuickPicks } from "../components/QuickPicks";
 import { RecentTenants } from "../components/RecentTenants";
 import API from "../api/axios";
 
@@ -46,7 +46,12 @@ export default function AdminDashboard() {
   return (
     <>
       <Navbar />
-      <div className="p-8 space-y-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-8 space-y-8"
+      >
         <div>
           <h1 className="text-3xl font-bold text-foreground">
             Admin Dashboard
@@ -93,9 +98,8 @@ export default function AdminDashboard() {
           <UpcomingLeases />
         </div>
 
-        <QuickPicks />
         <RecentTenants />
-      </div>
+      </motion.div>
     </>
   );
 }

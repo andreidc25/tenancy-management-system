@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
 
 export default function AdminReportDetail() {
   const { id } = useParams();
@@ -41,10 +40,9 @@ export default function AdminReportDetail() {
   if (!report) return <p className="p-6 text-red-500">Report not found.</p>;
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800">
+    <div className="min-h-screen text-gray-800">
       <Navbar />
       <div className="p-8 space-y-6">
-        <BackButton />
         <h1 className="text-2xl font-bold">{report.title}</h1>
 
         <div className="bg-white rounded-xl shadow-md p-6 space-y-4">

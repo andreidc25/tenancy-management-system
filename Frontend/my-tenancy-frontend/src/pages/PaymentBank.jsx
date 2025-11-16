@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
 
 export default function PaymentBank() {
   const navigate = useNavigate();
@@ -56,12 +55,12 @@ export default function PaymentBank() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-lg">
-        <BackButton />
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Bank Transfer Payment</h1>
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Bank Transfer Payment</h2>
+          <h2 className="text-xl font-semibold mb-4">Bank Account Details</h2>
 
           <div className="mb-4 text-gray-700">
             <p><strong>Bank:</strong> BPI (Spoof)</p>

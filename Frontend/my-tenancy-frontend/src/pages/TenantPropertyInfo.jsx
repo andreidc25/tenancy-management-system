@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Home, MapPin, Phone, Calendar, DollarSign, User } from "lucide-react";
 import Navbar from "../components/Navbar";
-import BackButton from '../components/BackButton';
 import API from "../api/axios";
 
 export default function TenantPropertyInfo() {
@@ -75,10 +75,15 @@ export default function TenantPropertyInfo() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
-      <main className="p-8 max-w-4xl mx-auto">
-        <BackButton />
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-8 max-w-4xl mx-auto"
+      >
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Property Information</h1>
         {loading ? (
           <div className="text-center py-20 text-gray-500">Loading property info…</div>
         ) : (
@@ -139,7 +144,7 @@ export default function TenantPropertyInfo() {
             )}
           </div>
         )}
-      </main>
+      </motion.main>
     </div>
   );
 }

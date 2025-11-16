@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { jwtDecode } from 'jwt-decode';
 import { CheckCircle, XCircle, Loader2, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import BackButton from '../components/BackButton';
 import API from '../api/axios'; // ✅ Use the centralized Axios instance
 
 export default function TenantPayments() {
@@ -102,11 +102,15 @@ export default function TenantPayments() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
-      <main className="container mx-auto px-4 py-8 max-w-3xl">
-        <BackButton />
-
+      <motion.main 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="container mx-auto px-4 py-8 max-w-3xl"
+      >
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Payments</h1>
         {/* Account Summary */}
         {balanceInfo && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
@@ -273,7 +277,7 @@ export default function TenantPayments() {
             </div>
           )}
         </div>
-      </main>
+      </motion.main>
     </div>
   );
 }

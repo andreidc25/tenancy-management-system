@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 
@@ -29,12 +30,17 @@ const PropertiesPage = () => {
   }, []);
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
 
       {/* Header */}
-      <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Properties</h2>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-2xl font-semibold">Properties</h2>
         <button
           onClick={() => navigate("/admin/properties/add")}
           className="bg-gradient-to-r from-purple-500 to-blue-500 text-white px-5 py-2 rounded-xl shadow hover:opacity-90 transition"
@@ -94,6 +100,7 @@ const PropertiesPage = () => {
           )}
         </div>
       </main>
+      </motion.div>
     </div>
   );
 };

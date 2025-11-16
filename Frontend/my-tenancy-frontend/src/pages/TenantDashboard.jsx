@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Wallet, Calendar, AlertCircle, TrendingUp } from "lucide-react";
 import { ClientStatCard } from "../components/StatCard";
-import { QuickPicks } from "../components/QuickPicks";
 import PropertyOverview from "../components/PropertyOverview";
 import PaymentHistory from "../components/PaymentHistory";
 import Navbar from "../components/Navbar";
@@ -41,11 +41,16 @@ const TenantDashboard = () => {
   return (
     <>
       <Navbar />
-      <div className="p-8 space-y-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="p-8 space-y-8"
+      >
         <div>
           <h1 className="text-3xl font-bold text-foreground">Tenant Dashboard</h1>
           <p className="text-muted-foreground mt-1">
-            Welcome back, {stats.tenant_name}! Here’s an overview of your rental information.
+            Welcome back, {stats.tenant_name}! Here's an overview of your rental information.
           </p>
         </div>
 
@@ -94,9 +99,7 @@ const TenantDashboard = () => {
           <PropertyOverview />
           <PaymentHistory />
         </div>
-
-        <QuickPicks />
-      </div>
+      </motion.div>
     </>
   );
 };

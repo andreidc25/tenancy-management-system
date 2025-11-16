@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
 import API from "../api/axios";
 
 export default function TenantReportDetail() {
@@ -55,10 +54,9 @@ export default function TenantReportDetail() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <BackButton />
         <div className="bg-white shadow-lg rounded-2xl p-6 mt-4">
           <h1 className="text-2xl font-semibold mb-2">{report.title}</h1>
           <div className="flex items-center gap-2 mb-4">

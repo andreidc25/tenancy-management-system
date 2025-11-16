@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import BackButton from '../components/BackButton';
 import API from "../api/axios";
 
 export default function TenantReports() {
@@ -35,22 +35,25 @@ export default function TenantReports() {
   }, [navigate]);
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
       
-      <div className="container mx-auto px-4 py-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="container mx-auto px-4 py-8"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800" style={{ fontFamily: 'Poppins, sans-serif' }}>Reports</h1>
+          <button
+            onClick={() => navigate("/tenant/reports/add")}
+            className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-5 py-2 rounded-xl shadow hover:opacity-90 transition"
+          >
+            + Add Report
+          </button>
+        </div>
         <div className="space-y-6">
-          <BackButton />
-          
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold">Reports</h2>
-            <button
-              onClick={() => navigate("/tenant/reports/add")}
-              className="bg-gradient-to-r from-pink-500 to-red-500 text-white px-5 py-2 rounded-xl shadow hover:opacity-90 transition"
-            >
-              + Add Report
-            </button>
-          </div>
 
           <div className="bg-white shadow-lg rounded-2xl p-6">
             {loading ? (
@@ -110,7 +113,7 @@ export default function TenantReports() {
             )}
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

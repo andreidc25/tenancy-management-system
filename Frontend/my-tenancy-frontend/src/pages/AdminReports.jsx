@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import API from "../api/axios";
@@ -27,14 +28,19 @@ const ReportsPage = () => {
   }, []);
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
 
-      <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Reports</h2>
-      </header>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">
+          <h2 className="text-2xl font-semibold">Reports</h2>
+        </header>
 
-      <main className="p-8">
+        <main className="p-8">
         <div className="bg-white shadow-lg rounded-2xl p-6">
           {loading ? (
             <p className="text-center text-gray-500 py-6">Loading reports...</p>
@@ -91,6 +97,7 @@ const ReportsPage = () => {
           )}
         </div>
       </main>
+      </motion.div>
     </div>
   );
 };

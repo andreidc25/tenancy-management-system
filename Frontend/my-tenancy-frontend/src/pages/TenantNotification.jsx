@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
-import BackButton from '../components/BackButton';
 import { Bell, Check, RefreshCw, Trash2 } from 'lucide-react';
 
 export default function TenantNotifications() {
@@ -114,16 +113,16 @@ export default function TenantNotifications() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
-        <BackButton />
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Notifications</h1>
         <div className="bg-white rounded-xl shadow p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Bell size={24} className="text-indigo-600" />
-              <h1 className="text-xl font-semibold">Notifications</h1>
+              <h2 className="text-xl font-semibold">All Notifications</h2>
             </div>
             <div className="flex items-center gap-2">
               <button onClick={fetchNotifications} title="Refresh" className="px-3 py-2 bg-gray-100 rounded hover:bg-gray-200 inline-flex items-center gap-2"><RefreshCw size={16} /> Refresh</button>

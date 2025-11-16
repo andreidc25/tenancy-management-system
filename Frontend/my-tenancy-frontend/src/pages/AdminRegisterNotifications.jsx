@@ -21,7 +21,7 @@ const RegisterNotificationPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
 
       {/* Page Header */}

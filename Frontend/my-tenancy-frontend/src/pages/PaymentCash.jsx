@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
 
 export default function PaymentCash() {
   const navigate = useNavigate();
@@ -57,12 +56,12 @@ export default function PaymentCash() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-lg">
-        <BackButton />
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Cash Payment</h1>
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Cash Payment Proof</h2>
+          <h2 className="text-xl font-semibold mb-4">Upload Proof of Payment</h2>
 
           {error && <div className="mb-4 p-3 bg-red-50 text-red-600 rounded">{error}</div>}
           {success && <div className="mb-4 p-3 bg-green-50 text-green-600 rounded">{success}</div>}

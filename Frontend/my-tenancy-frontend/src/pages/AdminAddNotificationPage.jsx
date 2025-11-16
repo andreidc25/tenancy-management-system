@@ -36,7 +36,7 @@ export default function AddNotificationPage() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
       <main className="max-w-3xl mx-auto p-8">
         <h2 className="text-2xl font-semibold mb-6">Send Notification</h2>

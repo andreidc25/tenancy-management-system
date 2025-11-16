@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
 
 export default function PaymentOnline() {
   const navigate = useNavigate();
@@ -56,12 +55,12 @@ export default function PaymentOnline() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Navbar />
       <main className="container mx-auto px-4 py-8 max-w-lg">
-        <BackButton />
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Online Payment</h1>
         <div className="bg-white p-6 rounded-xl shadow-md text-center">
-          <h2 className="text-xl font-semibold mb-4">Online Payment</h2>
+          <h2 className="text-xl font-semibold mb-4">Payment Instructions</h2>
 
           <p className="text-gray-700 mb-4">
             Send your payment to our spoof GCash account:

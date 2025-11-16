@@ -55,7 +55,7 @@ const RegisterPropertyPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
 
       <header className="px-8 py-6 border-b border-gray-200 flex justify-between items-center">

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import BackButton from "../components/BackButton";
 import API from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
@@ -57,13 +56,11 @@ const RegisterReportPage = () => {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
-        <BackButton />
-
-        <h2 className="text-2xl font-semibold mb-6">Add Report</h2>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800">Add Report</h1>
 
         <form
           onSubmit={handleSubmit}

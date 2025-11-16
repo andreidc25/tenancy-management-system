@@ -37,7 +37,7 @@ const TenantProfilePage = () => {
   if (!tenant) return <div>Tenant not found.</div>;
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
 
       <div className="p-8 max-w-3xl mx-auto bg-white shadow-lg rounded-2xl">

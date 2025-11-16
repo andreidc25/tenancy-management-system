@@ -74,7 +74,7 @@ const PropertyDetailPage = () => {
   if (error) return <p className="p-8 text-red-500">{error}</p>;
 
   return (
-    <div className="bg-gray-50 min-h-screen text-gray-800 font-sans">
+    <div className="min-h-screen text-gray-800 font-sans">
       <Navbar />
       <main className="p-8 max-w-2xl mx-auto">
         <h2 className="text-2xl font-semibold mb-6">Edit Property</h2>
