@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 export default function AddNotificationPage() {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ export default function AddNotificationPage() {
 
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/api/tenants/")
+      .get(`${API_URL}/tenants/`)
       .then((res) => setTenants(res.data))
       .catch((err) => console.error(err));
   }, []);
@@ -28,7 +29,7 @@ export default function AddNotificationPage() {
     };
 
     axios
-      .post("http://127.0.0.1:8000/api/notifications/", payload, {
+      .post(`${API_URL}/notifications/`, payload, {
         withCredentials: true,
       })
       .then(() => navigate("/admin/notifications"))

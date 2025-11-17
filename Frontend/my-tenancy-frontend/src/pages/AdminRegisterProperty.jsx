@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 const RegisterPropertyPage = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const RegisterPropertyPage = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/properties/", {
+      const response = await fetch(`${API_URL}/properties/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import { useNavigate, useParams } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 const PropertyDetailPage = () => {
   const { id } = useParams();
@@ -13,7 +14,7 @@ const PropertyDetailPage = () => {
   useEffect(() => {
     const fetchProperty = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/properties/${id}/`);
+        const response = await fetch(`${API_URL}/properties/${id}/`);
         if (!response.ok) throw new Error("Failed to fetch property details");
         const data = await response.json();
         setProperty(data);
@@ -40,7 +41,7 @@ const PropertyDetailPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/properties/${id}/`, {
+      const response = await fetch(`${API_URL}/properties/${id}/`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,7 @@ const PropertyDetailPage = () => {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/properties/${id}/`, {
+      const response = await fetch(`${API_URL}/properties/${id}/`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete property");

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import API from "../api/axios";
+import { API_URL } from "../api/config";
 
 export default function TenantReportDetail() {
   const { id } = useParams();
@@ -75,7 +76,7 @@ export default function TenantReportDetail() {
           {report.image && (
             <div className="border rounded-xl overflow-hidden shadow-sm max-w-md">
               <img
-                src={`http://127.0.0.1:8000${report.image}`}
+                src={`${API_URL.replace('/api', '')}${report.image}`}
                 alt="Report Evidence"
                 className="w-full object-cover"
               />

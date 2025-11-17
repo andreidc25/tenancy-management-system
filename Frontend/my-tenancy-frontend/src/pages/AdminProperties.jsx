@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../api/config";
 
 const PropertiesPage = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const PropertiesPage = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/properties/");
+        const response = await fetch(`${API_URL}/properties/`);
         if (!response.ok) throw new Error("Failed to fetch properties");
         const data = await response.json();
         console.log("Fetched properties:", data); // ✅ For debugging

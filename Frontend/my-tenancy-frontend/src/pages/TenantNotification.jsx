@@ -3,6 +3,7 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import Navbar from '../components/Navbar';
 import { Bell, Check, RefreshCw, Trash2 } from 'lucide-react';
+import { API_URL, getAuthHeaders } from '../api/config';
 
 export default function TenantNotifications() {
   const [notifications, setNotifications] = useState([]);
@@ -11,11 +12,6 @@ export default function TenantNotifications() {
   const [busyId, setBusyId] = useState(null);
 
   // Helpers
-  function getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  }
-
   function getUserId() {
     const token = localStorage.getItem('access_token');
     if (!token) return null;
@@ -41,7 +37,7 @@ export default function TenantNotifications() {
 
     try {
       // try common endpoints; adjust to your backend
-      const url = `http://localhost:8000/api/notifications/?tenant_id=${userId}`;
+      const url = `${API_URL}/notifications/?tenant_id=${userId}`;
       const res = await axios.get(url, { headers: getAuthHeaders() });
       console.log('Fetched notifications', res.data);
       setNotifications(Array.isArray(res.data) ? res.data : []);
@@ -65,7 +61,7 @@ export default function TenantNotifications() {
     setBusyId(n.id);
     setError('');
     try {
-      const url = `http://localhost:8000/api/notifications/${n.id}/`;
+      const url = `${API_URL}/notifications/${n.id}/`;
       // optimistic update
       setNotifications(prev => prev.map(x => (x.id === n.id ? { ...x, read: !x.read } : x)));
       await axios.patch(url, { read: !n.read }, { headers: getAuthHeaders() });
@@ -84,7 +80,7 @@ export default function TenantNotifications() {
     setError('');
     try {
       // backend may support bulk endpoint; otherwise patch individually
-      const url = `http://localhost:8000/api/notifications/mark-all-read/`;
+      const url = `${API_URL}/notifications/mark-all-read/`;
       await axios.post(url, {}, { headers: getAuthHeaders() });
       // refresh list
       fetchNotifications();
@@ -92,7 +88,7 @@ export default function TenantNotifications() {
       console.warn('bulk mark-all-read failed, falling back to individual calls', err);
       // fallback: patch each unread
       const unread = notifications.filter(n => !n.read);
-      await Promise.all(unread.map(n => axios.patch(`http://localhost:8000/api/notifications/${n.id}/`, { read: true }, { headers: getAuthHeaders() }).catch(e => console.error(e))));
+      await Promise.all(unread.map(n => axios.patch(`${API_URL}/notifications/${n.id}/`, { read: true }, { headers: getAuthHeaders() }).catch(e => console.error(e))));
       fetchNotifications();
     }
   }
@@ -102,7 +98,7 @@ export default function TenantNotifications() {
     setBusyId(id);
     setError('');
     try {
-      await axios.delete(`http://localhost:8000/api/notifications/${id}/`, { headers: getAuthHeaders() });
+      await axios.delete(`${API_URL}/notifications/${id}/`, { headers: getAuthHeaders() });
       setNotifications(prev => prev.filter(n => n.id !== id));
     } catch (err) {
       console.error('deleteNotification error', err);

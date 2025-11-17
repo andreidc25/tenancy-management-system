@@ -13,7 +13,9 @@ function LoginForm() {
     setError('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/auth/login/', {
+      // Use environment variable for API URL, fallback to localhost for development
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+      const response = await axios.post(`${apiUrl}/auth/login/`, {
         username,
         password,
       });
