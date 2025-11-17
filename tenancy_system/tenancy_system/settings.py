@@ -186,6 +186,3 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'your-gmail@gmail.com')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'your-app-password')
 DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER', 'your-gmail@gmail.com')
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
