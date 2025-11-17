@@ -191,20 +191,29 @@ class TenantRegistrationViewSet(viewsets.ViewSet):
 
         try:
             send_mail(
-                subject="Your Tenancy Account",
+                subject="Your Tenancy Account - Credentials",
                 message=(
                     f"Hello {username},\n\n"
-                    "An account has been created for you in the Tenancy Management System.\n\n"
+                    "Welcome to the Tenancy Management System!\n"
+                    "An account has been created for you.\n\n"
                     f"Username: {username}\n"
                     f"Temporary Password: {temp_password}\n\n"
-                    "Please log in and change your password after your first login."
+                    "Please log in and change your password after your first login.\n"
+                    "Visit: http://127.0.0.1:8000/login/\n\n"
+                    "Best regards,\n"
+                    "Tenancy Management System"
                 ),
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=[email],
                 fail_silently=False,
             )
+            print(f"✓ Email sent successfully to {email}")
         except Exception as e:
-            print("Email sending error:", e)
+            print(f"✗ Email sending failed: {e}")
+            return Response(
+                {"error": f"Tenant created but email failed to send: {e}"},
+                status=status.HTTP_201_CREATED,
+            )
 
         return Response(
             {"message": f"Tenant '{username}' registered successfully. Email sent to {email}."},
