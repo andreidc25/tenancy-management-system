@@ -28,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-(^^-2=27o@t9zwoq_jk^o73sw+(^y25cix*an&68=*c)fl2ks9"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['yourusername.pythonanywhere.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['mrabaajr.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -140,6 +140,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"  # For production deployment
+STATICFILES_DIRS = []  # Add custom static dirs here if needed
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -154,7 +156,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5175",
     "http://localhost:5175",
-    "https://your-frontend-name.vercel.app",
+    "https://your-frontend-name.vercel.app",  # Replace with your actual Vercel domain
     "http://localhost:5173",
 ]
 
