@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_URL } from '../api/config';
 
 function LoginForm() {
   const [username, setUsername] = useState('');
@@ -13,9 +14,7 @@ function LoginForm() {
     setError('');
 
     try {
-      // Use environment variable for API URL, fallback to localhost for development
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
-      const response = await axios.post(`${apiUrl}/auth/login/`, {
+      const response = await axios.post(`${API_URL}/auth/login/`, {
         username,
         password,
       });
