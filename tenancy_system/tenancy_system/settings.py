@@ -157,6 +157,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5175",
     "http://localhost:5175",
     "https://mrabaajr-tenancy-management-system.vercel.app",  # Vercel production
+    "https://mrabaajr-tenancy-management-system-m63drn7ea.vercel.app",  # Vercel deployment 1
+    "https://mrabaajr-tenancy-management-git-e49431-rafael-abaa-jrs-projects.vercel.app",  # Vercel deployment 2
 ]
 
 CORS_ALLOW_CREDENTIALS = True
