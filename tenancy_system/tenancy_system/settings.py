@@ -156,8 +156,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "http://127.0.0.1:5175",
     "http://localhost:5175",
-    "https://your-frontend-name.vercel.app",  # Replace with your actual Vercel domain
-    "http://localhost:5173",
+    "https://mrabaajr-tenancy-management-system.vercel.app",  # Vercel production
 ]
 
 CORS_ALLOW_CREDENTIALS = True
