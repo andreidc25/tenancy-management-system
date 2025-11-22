@@ -8,6 +8,8 @@ from accounts.views import UserViewSet
 from tenants.views import TenantViewSet, TenantRegistrationViewSet
 from properties.views import PropertyViewSet
 from notifications.views import NotificationViewSet
+from reports.views import ReportViewSet
+
 
 
 router = DefaultRouter()
@@ -16,6 +18,7 @@ router.register(r'properties', PropertyViewSet, basename='property')
 router.register(r'auth/users', UserViewSet, basename='user')
 router.register(r'tenant-register', TenantRegistrationViewSet, basename='tenant-register')
 router.register(r'notifications', NotificationViewSet, basename='notification') 
+router.register(r'reports', ReportViewSet, basename='report')
 
 urlpatterns = [
     path('admin/', admin.site.urls),

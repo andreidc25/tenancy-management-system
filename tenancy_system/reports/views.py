@@ -1,148 +1,87 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
-from tenants.models import TenantProfile
+from rest_framework.permissions import IsAuthenticated
+
 from .models import Report
 from .serializers import ReportSerializer
-from rest_framework.permissions import IsAdminUser
+from tenants.models import TenantProfile
 
 
-# ✅ Tenant: View their reports
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_tenant_reports(request):
-    user = request.user
-    tenant = TenantProfile.objects.filter(user_id=user.id).first()
 
-    if not tenant:
-        return Response({"error": "Tenant profile not found"}, status=404)
+class ReportViewSet(viewsets.ModelViewSet):
+    queryset = Report.objects.all().order_by('-created_at')
+    serializer_class = ReportSerializer
+    permission_classes = [IsAuthenticated]
 
-    reports = Report.objects.filter(tenant=tenant).order_by('-created_at')
-    serializer = ReportSerializer(reports, many=True)
-    return Response(serializer.data)
+    # -----------------------------------------
+    # LIST REPORTS BY TENANT
+    # GET /api/reports/tenant/<tenant_id>/
+    # -----------------------------------------
+    @action(detail=False, methods=['get'], url_path='tenant/(?P<tenant_id>[^/.]+)')
+    def tenant_reports(self, request, tenant_id=None):
+        try:
+            tenant = Tenant.objects.get(id=tenant_id)
+        except Tenant.DoesNotExist:
+            return Response(
+                {"error": "Tenant not found."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
 
+        reports = Report.objects.filter(tenant=tenant)
+        serializer = self.get_serializer(reports, many=True)
+        return Response(serializer.data)
 
-# ✅ Tenant: Add a new maintenance report
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def create_tenant_report(request):
-    user = request.user
-    tenant = TenantProfile.objects.filter(user_id=user.id).first()
+    # -----------------------------------------
+    # CREATE REPORT FOR SPECIFIC TENANT
+    # POST /api/reports/tenant/<tenant_id>/add/
+    # -----------------------------------------
+    @action(detail=False, methods=['post'], url_path='tenant/(?P<tenant_id>[^/.]+)/add')
+    def create_for_tenant(self, request, tenant_id=None):
+        try:
+            tenant = Tenant.objects.get(id=tenant_id)
+        except Tenant.DoesNotExist:
+            return Response(
+                {"error": "Tenant not found."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-    if not tenant:
-        return Response({"error": "Tenant profile not found"}, status=404)
+        data = request.data.copy()
+        data['tenant'] = tenant.id
 
-    serializer = ReportSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save(tenant=tenant)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = self.get_serializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    # -----------------------------------------
+    # UPDATE REPORT STATUS
+    # POST /api/reports/<id>/update-status/
+    # -----------------------------------------
+    @action(detail=True, methods=['post'], url_path='update-status')
+    def update_status(self, request, pk=None):
+        report = self.get_object()
+        new_status = request.data.get('status')
 
-# ✅ Admin: View all reports
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def get_all_reports(request):
-    reports = Report.objects.select_related('tenant__user').order_by('-created_at')
-    data = [
-        {
-            "id": r.id,
-            "tenant": r.tenant.user.get_full_name() or r.tenant.user.username,
-            "property": str(r.tenant.property) if r.tenant.property else "N/A",
-            "title": r.title,
-            "message": r.message,
-            "status": r.status,
-            "created_at": r.created_at,
-        }
-        for r in reports
-    ]
-    return Response(data)
+        if not new_status:
+            return Response({"error": "Status is required"}, status=400)
 
+        report.status = new_status
+        report.save()
 
-# ✅ Admin: Manually create a report
-@api_view(['POST'])
-@permission_classes([IsAdminUser])
-def submit_report(request):
-    serializer = ReportSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success": True, "new_status": new_status})
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_tenant_report_detail(request, report_id):
-    """Fetch a single tenant report by ID."""
-    tenant = TenantProfile.objects.filter(user_id=request.user.id).first()
-    if not tenant:
-        return Response({"error": "Tenant profile not found"}, status=404)
+    # -----------------------------------------
+    # SUBMIT REPORT (SHORTCUT)
+    # POST /api/reports/submit/
+    # -----------------------------------------
+    @action(detail=False, methods=['post'], url_path='submit')
+    def submit_report(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=400)
 
-    try:
-        report = Report.objects.get(id=report_id, tenant=tenant)
-    except Report.DoesNotExist:
-        return Response({"error": "Report not found"}, status=404)
-
-    serializer = ReportSerializer(report)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def get_all_reports(request):
-    reports = Report.objects.select_related('tenant__user').order_by('-created_at')
-    data = [
-        {
-            "id": r.id,
-            "tenant": r.tenant.user.get_full_name() or r.tenant.user.username,
-            "property": str(r.tenant.property) if r.tenant.property else "N/A",
-            "title": r.title,
-            "message": r.message,
-            "status": r.status.replace("_", " ").title(),
-            "created_at": r.created_at.strftime("%b %d, %Y"),
-        }
-        for r in reports
-    ]
-    return Response(data)
-
-# Existing get_all_reports() remains
-
-@api_view(['GET'])
-@permission_classes([IsAdminUser])
-def get_report_detail(request, pk):
-    """Fetch detailed info of one report"""
-    try:
-        report = Report.objects.select_related('tenant__user', 'tenant__property').get(pk=pk)
-    except Report.DoesNotExist:
-        return Response({"error": "Report not found"}, status=404)
-
-    data = {
-        "id": report.id,
-        "tenant": report.tenant.user.username,
-        "property": str(report.tenant.property) if report.tenant.property else "N/A",
-        "title": report.title,
-        "message": report.message,
-        "status": report.status,
-        "image": request.build_absolute_uri(report.image.url) if report.image else None,
-        "created_at": report.created_at.strftime("%b %d, %Y"),
-    }
-    return Response(data)
-
-
-@api_view(['PATCH'])
-@permission_classes([IsAdminUser])
-def update_report_status(request, pk):
-    """Allow admin to update the report's status"""
-    try:
-        report = Report.objects.get(pk=pk)
-    except Report.DoesNotExist:
-        return Response({"error": "Report not found"}, status=404)
-
-    new_status = request.data.get('status')
-    if new_status not in ['SUBMITTED', 'IN_PROGRESS', 'RESOLVED']:
-        return Response({"error": "Invalid status value"}, status=400)
-
-    report.status = new_status
-    report.save()
-
-    return Response({"success": True, "message": "Status updated successfully", "status": report.status})
