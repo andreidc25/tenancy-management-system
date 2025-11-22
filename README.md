@@ -1,9 +1,4 @@
 # Tenancy Management System
-
-## Live Demo
-- Frontend: https://tenancy-management-system.onrender.com
-- Backend / Admin: https://mrabaajr.pythonanywhere.com/admin/
-
 ## Description
 
 The Tenancy Management System is a full-stack web application that enables property managers and tenants to efficiently manage rental properties, process payments, track maintenance issues, and receive notifications. The system provides a secure, role-based interface for admins to manage properties and tenants, and for tenants to view their dashboards and submit payments or maintenance reports.
@@ -58,3 +53,6 @@ DEBUG=false
 ALLOWED_HOSTS=mrabaajr.pythonanywhere.com
 CORS_ALLOWED_ORIGINS=https://tenancy-management-system.onrender.com
 ```
+## Live Demo
+- Frontend: https://tenancy-management-system.onrender.com
+- Backend / Admin: https://mrabaajr.pythonanywhere.com/admin/
